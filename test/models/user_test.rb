@@ -43,6 +43,126 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
+  setup do
+    clear_enqueued_jobs
+  end
+
+  test "roles are granted and removed through the user API" do
+    user = users(:one)
+    user.update!(granted_roles: [])
+
+    user.grant_role!(:helper)
+
+    assert user.has_role?(:helper)
+    assert user.helper?
+    assert_equal "Helper", user.highest_role
+
+    user.remove_role!(:helper)
+
+    assert_not user.has_role?(:helper)
+  end
+
+  test "tutorial steps and dismissals mutate array state once" do
+    user = users(:one)
+    user.update_columns(tutorial_steps_completed: [], things_dismissed: [])
+
+    assert user.complete_tutorial_step!(:setup_hackatime)
+    assert user.tutorial_step_completed?(:setup_hackatime)
+    assert_no_difference -> { user.reload.tutorial_steps.count } do
+      user.complete_tutorial_step!(:setup_hackatime)
+    end
+
+    assert user.dismiss_thing!("flagship_ad")
+    assert user.has_dismissed?("flagship_ad")
+    assert_no_difference -> { user.reload.things_dismissed.count } do
+      user.dismiss_thing!("flagship_ad")
+    end
+
+    user.undismiss_thing!("flagship_ad")
+    assert_not user.reload.has_dismissed?("flagship_ad")
+  end
+
+  test "verification payload updates status and ignores nonfatal ineligible responses" do
+    user = users(:one)
+    user.update!(verification_status: "needs_submission", ysws_eligible: false)
+
+    assert_equal :updated, user.apply_hca_verification_payload!(
+      { "verification_status" => "verified", "ysws_eligible" => true },
+      persist_with_callbacks: false
+    )
+    assert user.reload.identity_verified?
+    assert user.ysws_eligible?
+
+    assert_equal :ignored_ineligible, user.apply_hca_verification_payload!(
+      { "verification_status" => "ineligible", "ysws_eligible" => false, "fatal_rejection" => false },
+      persist_with_callbacks: false
+    )
+    assert user.reload.identity_verified?
+  end
+
+  test "manual ysws override wins over stored eligibility" do
+    user = users(:one)
+    user.update!(ysws_eligible: false, manual_ysws_override: true)
+
+    assert user.ysws_eligible?
+  end
+
+  test "locking voting marks existing votes suspicious" do
+    user = users(:one)
+    vote = votes(:one)
+    user.update!(voting_locked: false)
+    vote.update_columns(suspicious: false)
+
+    user.lock_voting_and_mark_votes_suspicious!
+
+    assert user.reload.voting_locked?
+    assert vote.reload.suspicious?
+  end
+
+  test "balance cache can be invalidated" do
+    user = users(:one)
+
+    assert_equal user.ledger_entries.sum(:amount), user.balance
+
+    user.invalidate_balance_cache!
+
+    assert_equal user.balance, user.cached_balance
+  end
+
+  test "provider identity lookups use User identity records" do
+    user = users(:one)
+    User::Identity.insert_all!(
+      [
+        {
+          user_id: user.id,
+          provider: "hackatime",
+          uid: "hackatime-baseline",
+          created_at: Time.current,
+          updated_at: Time.current
+        }
+      ]
+    )
+
+    identity = User::Identity.find_by!(provider: "hackatime", uid: "hackatime-baseline")
+    assert_equal identity, user.reload.hackatime_identity
+    assert_equal user, User.find_by_hackatime("hackatime-baseline")
+    assert user.has_hackatime?
+  end
+
+  test "awarding achievements records pending notification state" do
+    user = users(:one)
+    user.achievements.destroy_all
+    user.update_column(:has_pending_achievements, false)
+
+    achievement = user.award_achievement!(:identity_verified)
+
+    assert_equal Achievement.find(:identity_verified), achievement
+    assert user.earned_achievement?(:identity_verified)
+    assert user.reload.has_pending_achievements?
+  end
+
   test "grant_email returns hcb_email when present" do
     user = users(:one)
     user.hcb_email = "hcb@example.com"

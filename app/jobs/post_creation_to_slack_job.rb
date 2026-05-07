@@ -33,7 +33,7 @@ class PostCreationToSlackJob < ApplicationJob
     return unless project && author
 
     project.followers.includes(:preference).each do |follower|
-      if follower.preference.send_notifications_for_followed_projects then
+      if follower.preference.send_notifications_for_followed_projects
         SendSlackDmJob.perform_later(
           follower.slack_id,
           "New devlog on #{project.title} by #{author.display_name}!",
@@ -125,7 +125,7 @@ class PostCreationToSlackJob < ApplicationJob
       [
         project_url(post.project, host: "flavortown.hackclub.com", protocol: "https"),
         post.project.title,
-        post.project.users
+        post.project.users.includes(:preference)
       ]
     when Post::ShipEvent
       post = commentable.post
@@ -134,7 +134,7 @@ class PostCreationToSlackJob < ApplicationJob
       [
         project_url(post.project, host: "flavortown.hackclub.com", protocol: "https"),
         post.project.title,
-        post.project.users
+        post.project.users.includes(:preference)
       ]
     else
       nil

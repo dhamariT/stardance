@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MyControllerTest < ActionDispatch::IntegrationTest
+class MyResourcesTest < ActionDispatch::IntegrationTest
   test "update_settings stores preference separately from user account fields" do
     user = users(:one)
     sign_in user
@@ -26,5 +26,16 @@ class MyControllerTest < ActionDispatch::IntegrationTest
     assert preference.send_notifications_for_new_followers
     assert_not preference.send_notifications_for_new_comments
     assert preference.search_engine_indexing_off
+  end
+
+  test "dismissal resource records dismissed thing" do
+    user = users(:one)
+    user.update_columns(things_dismissed: [])
+    sign_in user
+
+    post my_dismissals_path, params: { thing_name: "willsbuilds_banner" }
+
+    assert_response :success
+    assert user.reload.has_dismissed?("willsbuilds_banner")
   end
 end

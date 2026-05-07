@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   TAB_KEYS = %w[feed devlogs replies projects].freeze
 
   def show
-    @user = User.find(params[:id])
+    @user = User.includes(:preference).find(params[:id])
     authorize @user
 
     @body_class = "profile-layout-page"
@@ -38,8 +38,7 @@ class UsersController < ApplicationController
       devlogs_count: devlogs_count,
       ships_count: ships_count,
       votes_count: votes_count,
-      projects_count: @projects.size,
-      hours_all_time: (@user.devlog_seconds_total / 3600.0).round
+      projects_count: @projects.size
     }
 
     @follower_count  = @user.followers.count

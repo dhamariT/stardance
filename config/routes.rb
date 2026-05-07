@@ -40,16 +40,15 @@
 #                                               home GET    /home(.:format)                                                                                   home#index
 #                                           commands GET    /commands(.:format)                                                                               commands#index
 #                                        leaderboard GET    /leaderboard(.:format)                                                                            leaderboard#index
-#                                         my_balance GET    /my/balance(.:format)                                                                             my#balance
-#                                        my_settings PATCH  /my/settings(.:format)                                                                            my#update_settings
-#                                      dismiss_thing POST   /my/dismiss_thing(.:format)                                                                       my#dismiss_thing
-#                                            my_club DELETE /my/club(.:format)                                                                                my#unlink_club
+#                                         my_balance GET    /my/balance(.:format)                                                                             my/balances#show
+#                                        my_settings PATCH  /my/settings(.:format)                                                                            my/settings#update
+#                                       my_dismissals POST   /my/dismissals(.:format)                                                                          my/dismissals#create
 #                                    my_achievements GET    /my/achievements(.:format)                                                                        achievements#index
 #                        reveal_address_seller_order POST   /seller/orders/:id/reveal_address(.:format)                                                       seller/orders#reveal_address
 #                        mark_fulfilled_seller_order POST   /seller/orders/:id/mark_fulfilled(.:format)                                                       seller/orders#mark_fulfilled
 #                                      seller_orders GET    /seller/orders(.:format)                                                                          seller/orders#index
 #                                       seller_order GET    /seller/orders/:id(.:format)                                                                      seller/orders#show
-#                        complete_user_tutorial_step POST   /tutorial_steps/:id/complete(.:format)                                                            user/tutorial_steps#complete
+#              user_tutorial_step_completion POST   /tutorial_steps/:tutorial_step_id/completion(.:format)                                                    user/tutorial_steps/completions#create
 #                                 user_tutorial_step GET    /tutorial_steps/:id(.:format)                                                                     user/tutorial_steps#show
 #                                        helper_root GET    /helper(.:format)                                                                                 helper/application#index
 #                                balance_helper_user GET    /helper/users/:id/balance(.:format)                                                               helper/users#balance
@@ -468,9 +467,11 @@ Rails.application.routes.draw do
   get "leaderboard", to: "leaderboard#index"
 
   # My
-  get "my/balance", to: "my#balance", as: :my_balance
-  patch "my/settings", to: "my#update_settings", as: :my_settings
-  post "my/dismiss_thing", to: "my#dismiss_thing", as: :dismiss_thing
+  namespace :my do
+    resource :balance, only: [ :show ]
+    resource :settings, only: [ :update ]
+    resources :dismissals, only: [ :create ]
+  end
   get "my/achievements", to: "achievements#index", as: :my_achievements
 
   namespace :seller do
@@ -484,9 +485,7 @@ Rails.application.routes.draw do
 
   namespace :user, path: "" do
     resources :tutorial_steps, only: [ :show ] do
-      member do
-        post :complete
-      end
+      resource :completion, only: [ :create ], module: :tutorial_steps
     end
   end
 

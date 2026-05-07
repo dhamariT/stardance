@@ -1,16 +1,7 @@
-class MyController < ApplicationController
+class My::SettingsController < ApplicationController
   before_action :require_login
 
-  def balance
-    unless turbo_frame_request?
-      redirect_to root_path
-      return
-    end
-
-    @balance = current_user.ledger_entries.includes(:ledgerable).order(created_at: :desc)
-  end
-
-  def update_settings
+  def update
     current_user.update(hcb_email: params[:hcb_email].presence)
     current_user.preference.update!(
       send_votes_to_slack: params[:send_votes_to_slack] == "1",
@@ -24,20 +15,8 @@ class MyController < ApplicationController
     redirect_back fallback_location: root_path, notice: "Settings saved"
   end
 
-  def dismiss_thing
-    thing_name = params[:thing_name]
-    return head :bad_request unless thing_name.present?
-
-    current_user.dismiss_thing!(thing_name)
-    head :ok
-  rescue StandardError => e
-    Rails.logger.error("Error dismissing thing: #{e.message}")
-    head :internal_server_error
-  end
-
   private
-
-  def require_login
-    redirect_to root_path, alert: "Please log in first" and return unless current_user
-  end
+    def require_login
+      redirect_to root_path, alert: "Please log in first" and return unless current_user
+    end
 end

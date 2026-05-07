@@ -24,8 +24,6 @@ class Projects::DevlogsController < ApplicationController
 
       if @devlog.save
         Post.create!(project: @project, user: current_user, postable: @devlog)
-        Rails.cache.delete("user/#{current_user.id}/devlog_seconds_total")
-        Rails.cache.delete("user/#{current_user.id}/devlog_seconds_today/#{Time.zone.today}")
         flash[:notice] = "Devlog created successfully"
 
         unless @devlog.tutorial?

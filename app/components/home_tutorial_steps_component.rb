@@ -86,7 +86,7 @@ class HomeTutorialStepsComponent < ApplicationComponent
           class: "btn btn--borderless btn--bg_yellow",
           data: {
             action: "click->tutorial-video-modal#open",
-            tutorial_video_modal_complete_url_param: helpers.complete_user_tutorial_step_path(step.slug),
+            tutorial_video_modal_complete_url_param: helpers.user_tutorial_step_completion_path(step.slug),
             tutorial_video_modal_video_url_param: step.video_url
           }
         ) do
