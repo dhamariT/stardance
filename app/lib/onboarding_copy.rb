@@ -8,7 +8,6 @@ module OnboardingCopy
     { selector: nil,                                  text: "Welcome to Stardance, explorer! Let me show you around." },
     { selector: "[data-onboarding-target='home']", text: "This is Home — your home base. You'll come back here to track your progress and see what's next." },
     { selector: "[data-onboarding-target='projects']", text: "Projects is your space. You'll start the things you build here, and post devlogs as you go." },
-    { selector: "[data-onboarding-target='explore']", text: "Explore is where you can see what other explorers are making." },
     { selector: "[data-onboarding-target='shop']",    text: "And the Shop is where you trade the Stardust you earn for cool prizes." },
     { selector: nil,                                  text: "That's the gist! Drop into each tab whenever you're ready — I'll be around if you need me." }
   ].freeze
@@ -17,11 +16,6 @@ module OnboardingCopy
     visit_projects: [
       "This is Projects — your space for the things you build and ship.",
       "Hit 'New project' when you're ready to start building. Post devlogs as you go to keep a record of your progress."
-    ].freeze,
-
-    visit_explore: [
-      "This is Explore — see what other explorers are making.",
-      "Browse for inspiration, follow projects you're into, and react to devlogs you like."
     ].freeze,
 
     visit_shop: [

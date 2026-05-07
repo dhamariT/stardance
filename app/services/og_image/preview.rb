@@ -4,7 +4,6 @@ module OgImage
       OgImage::Project,
       OgImage::Start,
       OgImage::Home,
-      OgImage::Explore,
       OgImage::Gallery,
       OgImage::Extensions,
       OgImage::Shop,

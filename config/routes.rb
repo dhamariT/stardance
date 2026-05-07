@@ -21,9 +21,6 @@
 #                                              votes GET    /votes(.:format)                                                                                  votes#index
 #                                                    POST   /votes(.:format)                                                                                  votes#create
 #                                           new_vote GET    /votes/new(.:format)                                                                              votes#new
-#                                      explore_index GET    /explore(.:format)                                                                                explore#index
-#                                    explore_gallery GET    /explore/gallery(.:format)                                                                        explore#gallery
-#                                  explore_following GET    /explore/following(.:format)                                                                      explore#following
 #                                 rails_health_check GET    /up(.:format)                                                                                     rails/health#show
 #                                         test_error GET    /test_error(.:format)                                                                             debug#error
 #                                  letter_opener_web        /letter_opener                                                                                    LetterOpenerWeb::Engine
@@ -421,10 +418,6 @@ Rails.application.routes.draw do
     end
   end
 
-  # Explore
-  get "explore", to: "explore#index", as: :explore_index
-  get "explore/gallery", to: "explore#gallery", as: :explore_gallery
-  get "explore/following", to: "explore#following", as: :explore_following
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check

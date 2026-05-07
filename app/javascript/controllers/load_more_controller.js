@@ -108,7 +108,7 @@ export default class extends Controller {
 
   showEndMessage() {
     const endElement = Object.assign(document.createElement("p"), {
-      className: "explore__end",
+      className: "load-more__end",
       textContent: "You've reached the end.",
     });
 
@@ -126,7 +126,7 @@ export default class extends Controller {
       this.buttonTarget.disabled = false;
     } else if (this.hasSentinelTarget) {
       this.sentinelTarget.textContent = "Failed to load more devlogs.";
-      this.sentinelTarget.classList.add("explore__error");
+      this.sentinelTarget.classList.add("load-more__error");
       this.disconnectObserver();
     }
   }

@@ -4,7 +4,6 @@ class OgImagesController < ApplicationController
   STATIC_PAGES = {
     "home" => -> { OgImage::Home.new },
     "start" => -> { OgImage::Start.new },
-    "explore" => -> { OgImage::Explore.new },
     "gallery" => -> { OgImage::Gallery.new },
     "extensions" => -> { OgImage::Extensions.new },
     "shop" => -> { OgImage::Shop.new }
