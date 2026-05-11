@@ -37,7 +37,7 @@ class ShopController < ApplicationController
       redirect_to shop_my_orders_path, alert: "You cannot cancel an already fulfilled order."
       return
     end
-    result = current_user.cancel_shop_order(params[:order_id])
+    result = @order.cancel_by_user
 
     if result[:success]
       redirect_to shop_my_orders_path, notice: "Order cancelled successfully!"

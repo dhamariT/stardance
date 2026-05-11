@@ -135,6 +135,18 @@ class ShopOrder < ApplicationRecord
     "#{user.display_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
   end
 
+  def cancel_by_user
+    return { success: false, error: "Your order can not be canceled" } unless may_refund?
+
+    with_lock do
+      return { success: false, error: "Your order can not be canceled" } unless may_refund?
+
+      refund!
+      accessory_orders.each { |accessory_order| accessory_order.refund! if accessory_order.may_refund? }
+    end
+    { success: true, order: self }
+  end
+
   def can_view_address?(viewer)
     return false unless viewer
 

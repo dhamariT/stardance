@@ -1,4 +1,5 @@
 module User::ShopAccess
+  # this needs more work
   extend ActiveSupport::Concern
 
   def seller? = ShopItem::HackClubberItem.exists?(user_id: id)
@@ -22,23 +23,8 @@ module User::ShopAccess
     end
   end
 
-  def cancel_shop_order(order_id)
-    order = shop_orders.find(order_id)
-    return { success: false, error: "Your order can not be canceled" } unless order.may_refund?
-
-    order.with_lock do
-      return { success: false, error: "Your order can not be canceled" } unless order.may_refund?
-
-      order.refund!
-      order.accessory_orders.each { |accessory_order| accessory_order.refund! if accessory_order.may_refund? }
-    end
-    { success: true, order: order }
-  rescue ActiveRecord::RecordNotFound
-    { success: false, error: "wuh" }
-  end
-
   def addresses
-    identity = identities.find_by(provider: "hack_club")
+    identity = hack_club_identity
     return [] unless identity&.access_token.present?
 
     identity_payload = HCAService.identity(identity.access_token)
@@ -48,7 +34,7 @@ module User::ShopAccess
   end
 
   def birthday
-    identity = identities.find_by(provider: "hack_club")
+    identity = hack_club_identity
     return nil unless identity&.access_token.present?
 
     identity_payload = HCAService.identity(identity.access_token)
