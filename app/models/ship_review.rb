@@ -9,8 +9,7 @@ class ShipReview < ApplicationRecord
   enum :status, {
     pending: 0,
     approved: 1,
-    returned: 2,
-    rejected: 3
+    returned: 2
   }, default: :pending
 
   validates :feedback, length: { maximum: 10_000 }, allow_blank: true

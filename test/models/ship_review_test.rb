@@ -61,17 +61,36 @@ class ShipReviewTest < ActiveSupport::TestCase
     assert_equal "approved", @project.reload.ship_status
   end
 
-  test "returning the review sends the project back to submitted" do
+  test "returning the review sends the project to needs_changes" do
     @project.update!(ship_status: :under_review)
     review = ShipReview.create!(project: @project, status: :pending)
     review.update!(status: :returned, reviewer: @reviewer, feedback: "needs work")
-    assert_equal "submitted", @project.reload.ship_status
+    assert_equal "needs_changes", @project.reload.ship_status
   end
 
-  test "rejecting the review marks the project rejected" do
-    @project.update!(ship_status: :under_review)
-    review = ShipReview.create!(project: @project, status: :pending)
-    review.update!(status: :rejected, reviewer: @reviewer, feedback: "no")
-    assert_equal "rejected", @project.reload.ship_status
+  test "user can re-ship after needs_changes" do
+    @project.update!(ship_status: :needs_changes)
+    assert @project.may_submit_for_review?, "needs_changes projects must be able to re-submit"
+  end
+
+  test "submit_for_review creates a pending ShipReview" do
+    project = Project.new(@project.attributes.except("id", "created_at", "updated_at", "ship_status"))
+    project.ship_status = :draft
+    project.save!(validate: false)
+    project.define_singleton_method(:shippable?) { true }
+
+    assert_difference -> { project.ship_reviews.pending.count }, 1 do
+      project.submit_for_review!
+    end
+  end
+
+  test "submit_for_review does not double-create a pending ShipReview" do
+    @project.update!(ship_status: :needs_changes)
+    @project.define_singleton_method(:shippable?) { true }
+    ShipReview.create!(project: @project, status: :pending)
+
+    assert_no_difference -> { @project.ship_reviews.pending.count } do
+      @project.submit_for_review!
+    end
   end
 end

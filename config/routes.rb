@@ -382,7 +382,7 @@ class ReviewerConstraint
     u = User.find_by(id: request.session[:user_id])
     u ||= User.find_by(id: ENV["DEV_ADMIN_USER_ID"]) if Rails.env.development?
     return false unless u
-    Flipper.enabled?(:reviewer_dashboard, u) && u.can_review?
+    u.can_review?
   end
 end
 

@@ -200,13 +200,15 @@ class Project < ApplicationRecord
     state :draft, initial: true
     state :submitted
     state :under_review
+    state :needs_changes
     state :approved
     state :rejected
 
     event :submit_for_review do
-      transitions from: [ :draft, :submitted, :under_review, :approved, :rejected ], to: :submitted, guard: :shippable?
+      transitions from: [ :draft, :submitted, :under_review, :needs_changes, :approved, :rejected ], to: :submitted, guard: :shippable?
       after do
         self.shipped_at = Time.current
+        ship_reviews.find_or_create_by!(status: :pending)
       end
     end
 
@@ -223,7 +225,7 @@ class Project < ApplicationRecord
     end
 
     event :return_for_changes do
-      transitions from: :under_review, to: :submitted
+      transitions from: :under_review, to: :needs_changes
     end
   end
 
