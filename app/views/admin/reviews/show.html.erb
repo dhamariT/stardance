@@ -22,15 +22,17 @@
       </div>
 
       <div class="header-actions">
-        <% if @review.user %>
-          <div class="submitter-card">
-            <div class="submitter-avatar">
-              <% display_name = @review.user.display_name || @review.user.email || "?" %>
-              <%= display_name.first.upcase %>
-            </div>
-            <div class="submitter-info">
-              <div class="submitter-name"><%= @review.user.display_name || "Unknown User" %></div>
-              <div class="submitter-email"><%= @review.user.email %></div>
+        <% repo_info = parse_repo_info(@review.project.repo_url) %>
+        <% if repo_info %>
+          <div class="repo-platform-card">
+            <div class="platform-info">
+              <div class="platform-username">
+                @<%= repo_info[:username] %>
+                <% contributions = fetch_platform_contributions(repo_info[:platform], repo_info[:username]) %>
+                <% if contributions %>
+                  <span class="contribution-count">• <%= contributions %></span>
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>

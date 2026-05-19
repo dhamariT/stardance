@@ -899,8 +899,8 @@
     }
   }
 
-  // Submitter Card
-  .submitter-card {
+  // Repo Platform Card
+  .repo-platform-card {
     display: flex;
     align-items: center;
     gap: var(--space-s);
@@ -909,18 +909,18 @@
       var(--color-set-2-bg) 0%,
       var(--color-set-3-bg) 100%
     );
-    border: 2px solid var(--color-brand-blue);
+    border: 2px solid var(--color-brand-mint);
     border-radius: var(--profile-radius);
     padding: var(--space-s) var(--space-m);
-    box-shadow: 0 4px 12px rgba(149, 219, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(129, 255, 255, 0.2);
 
-    .submitter-avatar {
+    .platform-icon {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       background: linear-gradient(
         135deg,
-        var(--color-brand-lilac) 0%,
+        var(--color-brand-mint) 0%,
         var(--color-brand-blue) 100%
       );
       display: flex;
@@ -932,23 +932,34 @@
       font-family: var(--font-family-sans);
     }
 
-    .submitter-info {
+    .platform-info {
       display: flex;
       flex-direction: column;
       gap: var(--space-xxxs);
     }
 
-    .submitter-name {
+    .platform-name {
       color: var(--color-space-text);
       font-size: var(--font-size-m);
       font-weight: 700;
       font-family: var(--font-family-sans);
     }
 
-    .submitter-email {
-      color: var(--color-space-text-muted);
+    .platform-username {
+      color: var(--color-brand-mint);
       font-size: var(--font-size-xs);
+      font-weight: 600;
       font-family: var(--font-family-sans);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      flex-wrap: wrap;
+
+      .contribution-count {
+        color: var(--color-space-text-muted);
+        font-weight: 400;
+        font-size: var(--font-size-xxs);
+      }
     }
   }
 
