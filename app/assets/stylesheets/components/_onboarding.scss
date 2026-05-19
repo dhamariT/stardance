@@ -267,27 +267,41 @@ body.home-welcoming {
 }
 
 // Upgrade modal (turbo-stream variant — overlays the current page)
-.upgrade-modal {
-  align-items: center;
-  animation: upgrade-modal-fade-in 200ms ease both;
-  background: rgba(8, 6, 31, 0.8);
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  padding: 2rem;
-  position: fixed;
-  z-index: 200;
+.upgrade-card {
+  background: var(--color-space-bg);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  color: white;
+  max-width: 500px;
+  padding: 2.5rem;
+  position: relative;
+  text-align: center;
 
-  &__card {
-    animation: upgrade-modal-rise-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    background: var(--color-space-bg);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 1rem;
-    color: white;
-    max-width: 500px;
-    padding: 2.5rem;
-    position: relative;
-    text-align: center;
+  &__title {
+    font-family: "Exo 2", sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+  }
+
+  &__body {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 0 2rem;
+  }
+
+  &__cta {
+    background: var(--color-brand-highlight);
+    border: none;
+    border-radius: 999px;
+    color: #000;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Exo 2", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.7rem 1.6rem;
+    text-decoration: none;
   }
 
   &__close {
@@ -315,28 +329,27 @@ body.home-welcoming {
     }
   }
 
-  &__title {
-    font-family: "Exo 2", sans-serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin: 0 0 1rem;
+  &__back {
+    color: rgba(255, 255, 255, 0.7);
+    display: block;
+    margin-top: 1rem;
+    text-decoration: underline;
   }
+}
 
-  &__body {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin: 0 0 2rem;
-  }
+.upgrade-modal {
+  align-items: center;
+  animation: upgrade-modal-fade-in 200ms ease both;
+  background: rgba(8, 6, 31, 0.8);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 2rem;
+  position: fixed;
+  z-index: 200;
 
-  &__cta {
-    background: var(--color-brand-highlight);
-    border-radius: 999px;
-    color: #000;
-    display: inline-block;
-    font-family: "Exo 2", sans-serif;
-    font-weight: 700;
-    padding: 0.7rem 1.6rem;
-    text-decoration: none;
+  .upgrade-card {
+    animation: upgrade-modal-rise-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
@@ -360,7 +373,6 @@ body.home-welcoming {
   }
 }
 
-// Upgrade prompt (full-page fallback for non-turbo requests)
 .upgrade-prompt {
   align-items: center;
   background: rgba(8, 6, 31, 0.8);
@@ -370,45 +382,4 @@ body.home-welcoming {
   padding: 2rem;
   position: fixed;
   z-index: 100;
-
-  &__card {
-    background: var(--color-space-bg);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 1rem;
-    color: white;
-    max-width: 500px;
-    padding: 2.5rem;
-    text-align: center;
-  }
-
-  &__title {
-    font-family: "Exo 2", sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 1rem;
-  }
-
-  &__body {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin: 0 0 2rem;
-  }
-
-  &__cta {
-    background: var(--color-brand-highlight);
-    border-radius: 999px;
-    color: #000;
-    display: inline-block;
-    font-family: "Exo 2", sans-serif;
-    font-weight: 700;
-    padding: 0.7rem 1.6rem;
-    text-decoration: none;
-  }
-
-  &__back {
-    color: rgba(255, 255, 255, 0.7);
-    display: block;
-    margin-top: 1rem;
-    text-decoration: underline;
-  }
 }

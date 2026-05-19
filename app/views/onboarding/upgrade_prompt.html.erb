@@ -1,13 +1,9 @@
 <% content_for :title, "Sign in with Hack Club" %>
 <div class="upgrade-prompt">
-  <div class="upgrade-prompt__card">
-    <h1 class="upgrade-prompt__title">Sign in to continue</h1>
-    <p class="upgrade-prompt__body">
-      You're browsing as a guest. To create projects, like, comment, or follow other builders, sign in with your Hack Club account.
-    </p>
-    <%= link_to "Sign in with Hack Club", hack_club_auth_path, class: "upgrade-prompt__cta" %>
-    <% if (back_url = @back_path || safe_referrer).present? %>
-      <%= link_to "Back", back_url, class: "upgrade-prompt__back" %>
+  <div class="upgrade-card">
+    <%= render "onboarding/upgrade_content" %>
+    <% if (back_url = @back_path).present? %>
+      <%= link_to "Back", back_url, class: "upgrade-card__back" %>
     <% end %>
   </div>
 </div>
