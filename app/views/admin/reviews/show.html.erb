@@ -1,6 +1,6 @@
 <% content_for :title, "YSWS Review ##{@review.id}" %>
 
-<main class="admin-ysws-reviews" role="main" data-controller="review-sidebar">
+<main class="admin-ysws-reviews" role="main" data-controller="review-sidebar fraud-report" data-fraud-report-review-id-value="<%= @review.id %>">
   <!-- Header Section -->
   <div class="review-detail-header">
     <%= link_to "← back", "/admin/review", class: "btn-back", "aria-label": "Back to review queue" %>
@@ -48,7 +48,7 @@
           </button>
         <% end %>
 
-        <button class="btn-action btn-report" disabled>
+        <button class="btn-action btn-report" data-action="click->fraud-report#open">
           🚩 Report to Fraud Squad!
         </button>
       </div>
@@ -427,4 +427,38 @@
       </button>
     </div>
   </section>
+
+  <!-- Fraud Report Modal -->
+  <div class="fraud-report-modal" data-fraud-report-target="modal">
+    <div class="fraud-report-modal__content" data-action="click->fraud-report#stopPropagation">
+      <div class="fraud-report-modal__header">
+        <h2>Report to Fraud Squad</h2>
+        <button class="fraud-report-modal__close" data-action="click->fraud-report#close" aria-label="Close modal">
+          ×
+        </button>
+      </div>
+
+      <div class="fraud-report-modal__body">
+        <label for="fraud-details" class="fraud-report-modal__label">
+          Describe the issue (minimum 20 characters):
+        </label>
+        <textarea
+          id="fraud-details"
+          class="fraud-report-modal__textarea"
+          data-fraud-report-target="textarea"
+          placeholder="Explain why you're reporting this project to the fraud squad..."
+          rows="6"
+        ></textarea>
+      </div>
+
+      <div class="fraud-report-modal__footer">
+        <button class="fraud-report-modal__cancel" data-action="click->fraud-report#close">
+          Cancel
+        </button>
+        <button class="fraud-report-modal__submit" data-action="click->fraud-report#submit" data-fraud-report-target="submitButton">
+          Submit Report
+        </button>
+      </div>
+    </div>
+  </div>
 </main>

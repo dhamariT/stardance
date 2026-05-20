@@ -50,46 +50,9 @@ export default class extends Controller {
       .attr("viewBox", [0, 0, width, height])
       .attr("style", "max-width: 100%; height: auto;");
 
-    // Add gradient definitions
-    const defs = svg.append("defs");
-
-    // Normal gradient (lilac to blue)
-    const gradient = defs
-      .append("linearGradient")
-      .attr("id", "bar-gradient")
-      .attr("x1", "0%")
-      .attr("x2", "100%")
-      .attr("y1", "0%")
-      .attr("y2", "0%");
-
-    gradient
-      .append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "rgb(186, 148, 255)"); // lilac
-
-    gradient
-      .append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", "rgb(149, 219, 255)"); // blue
-
-    // Over-600 gradient (red/salmon)
-    const redGradient = defs
-      .append("linearGradient")
-      .attr("id", "bar-gradient-red")
-      .attr("x1", "0%")
-      .attr("x2", "100%")
-      .attr("y1", "0%")
-      .attr("y2", "0%");
-
-    redGradient
-      .append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "rgb(255, 141, 157)"); // salmon
-
-    redGradient
-      .append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", "rgb(239, 68, 68)"); // red
+    // Define solid colors for bars
+    const normalBarColor = "rgb(129, 255, 255)"; // mint (brand color)
+    const overLimitBarColor = "rgb(255, 141, 157)"; // salmon (brand color)
 
     // Add bars
     svg
@@ -102,7 +65,7 @@ export default class extends Controller {
       .attr("width", (d) => x(d.minutes) - x(0))
       .attr("height", y.bandwidth())
       .attr("fill", (d) =>
-        d.minutes > 600 ? "url(#bar-gradient-red)" : "url(#bar-gradient)"
+        d.minutes > 600 ? overLimitBarColor : normalBarColor
       )
       .attr("rx", 4)
       .style("cursor", "pointer")

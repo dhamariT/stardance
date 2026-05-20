@@ -26,5 +26,25 @@ module Admin
         one_hour_plus_count: devlog_minutes.count { |m| m >= 60 }
       }
     end
+
+    def report_fraud
+      authorize :admin, :access_reviews?
+
+      @review = YswsReview.find(params[:id])
+
+      report = Project::Report.new(
+        project_id: @review.project_id,
+        reporter_id: current_user.id,
+        reason: "YSWS project flag",
+        details: params[:details],
+        status: :pending
+      )
+
+      if report.save
+        render json: { success: true, message: "Report submitted successfully" }, status: :created
+      else
+        render json: { success: false, errors: report.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
   end
 end

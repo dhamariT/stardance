@@ -707,6 +707,7 @@ Rails.application.routes.draw do
 
     get 'review', to: 'reviews#index'
     get 'review/:id', to: 'reviews#show', as: 'review_detail'
+    post 'review/:id/report_fraud', to: 'reviews#report_fraud', as: 'review_report_fraud'
 
     resources :devlog_reviews, only: [:update]
   end

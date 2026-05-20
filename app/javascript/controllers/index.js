@@ -55,11 +55,14 @@ application.register("faq-accordion", FaqAccordionController);
 import FileUploadController from "./file_upload_controller";
 application.register("file-upload", FileUploadController);
 
-import GithubCalendarController from "./github_calendar_controller";
-application.register("github-calendar", GithubCalendarController);
-
 import FlashController from "./flash_controller";
 application.register("flash", FlashController);
+
+import FraudReportController from "./fraud_report_controller";
+application.register("fraud-report", FraudReportController);
+
+import GithubCalendarController from "./github_calendar_controller";
+application.register("github-calendar", GithubCalendarController);
 
 import HackatimeProjectSelectorController from "./hackatime_project_selector_controller";
 application.register(
