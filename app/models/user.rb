@@ -123,6 +123,7 @@ class User < ApplicationRecord
   }, prefix: :experience
 
   ALLOWED_INTERESTS = %w[web_dev hardware app_dev game_dev].freeze
+  INTERESTS_UNKNOWN = "dont_know".freeze
 
   validate :interests_must_be_allowed
 
@@ -165,6 +166,7 @@ class User < ApplicationRecord
 
   def interests_must_be_allowed
     return if interests.blank?
+    return if Array(interests) == [ INTERESTS_UNKNOWN ]
     invalid = Array(interests) - ALLOWED_INTERESTS
     errors.add(:interests, "contains invalid values: #{invalid.join(', ')}") if invalid.any?
   end

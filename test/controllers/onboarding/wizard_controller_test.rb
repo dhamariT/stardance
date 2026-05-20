@@ -62,6 +62,16 @@ class Onboarding::WizardControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to onboarding_birthday_path
   end
 
+  test "interests step accepts the 'I don't know' sentinel and routes to result" do
+    post onboarding_start_path,    params: { email: "skip@example.com" }
+    post onboarding_birthday_path, params: { attestation: "teen_13_18" }
+    post onboarding_experience_path, params: { level: "little" }
+    post onboarding_interests_path, params: { interests: [ User::INTERESTS_UNKNOWN, "web_dev" ] }
+
+    assert_redirected_to onboarding_interests_result_path
+    assert_equal [ User::INTERESTS_UNKNOWN ], User.find_by(email: "skip@example.com").interests
+  end
+
   test "full happy path populates the existing guest and redirects to complete" do
     assert_difference "User.count", 1 do
       post onboarding_start_path, params: { email: "happy@example.com" }

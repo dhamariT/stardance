@@ -19,8 +19,12 @@ module Onboarding
     def previous_fill_percentage
       idx = STEPS.index(step)
       raise ArgumentError, "Unknown progress-bar step: #{step.inspect}" if idx.nil?
-      return 0 if idx.zero?
-      (STEP_FRACTIONS.fetch(STEPS[idx - 1], 0) * 100).round
+
+      prev_idx = going_back? ? idx + 1 : idx - 1
+      return 0 if prev_idx.negative?
+      return 100 if prev_idx >= STEPS.size
+
+      (STEP_FRACTIONS.fetch(STEPS[prev_idx], 0) * 100).round
     end
 
     def first_appearance?
@@ -30,7 +34,11 @@ module Onboarding
     def back_path
       prev_step = previous_step
       return nil if prev_step.nil?
-      helpers.public_send("onboarding_#{prev_step}_path")
+      helpers.public_send("onboarding_#{prev_step}_path", back: 1)
+    end
+
+    def going_back?
+      helpers.params[:back].to_s == "1"
     end
 
     private

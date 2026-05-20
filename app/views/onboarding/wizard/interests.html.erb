@@ -8,16 +8,24 @@
     <p class="onboarding-screen__subhead">pick as many as you want !!!!!!!!!!!!!!!!!!!!!!!!!</p>
 
     <%= form_with url: onboarding_interests_path, method: :post, local: true,
-                   data: { controller: "onboarding-interests", action: "change->onboarding-interests#refresh" },
+                   data: { controller: "onboarding-interests", action: "change->onboarding-interests#toggle" },
                    class: "onboarding-interests__form" do |f| %>
       <div class="onboarding-interests__grid">
         <% User::ALLOWED_INTERESTS.each do |slug| %>
           <label class="onboarding-interests__tile">
             <%= check_box_tag "interests[]", slug, @selected.include?(slug),
-                              class: "onboarding-interests__checkbox" %>
+                              class: "onboarding-interests__checkbox",
+                              data: { onboarding_interests_target: "interest" } %>
             <span class="onboarding-interests__label"><%= slug.tr("_", " ") %></span>
           </label>
         <% end %>
+        <label class="onboarding-interests__tile onboarding-interests__tile--unknown">
+          <%= check_box_tag "interests[]", User::INTERESTS_UNKNOWN,
+                            @selected == [ User::INTERESTS_UNKNOWN ],
+                            class: "onboarding-interests__checkbox",
+                            data: { onboarding_interests_target: "unknown" } %>
+          <span class="onboarding-interests__label">i don't know</span>
+        </label>
       </div>
       <%= render SpecialActionButtonComponent.new(
             text: "Next",

@@ -13,6 +13,12 @@ class UserOnboardingTest < ActiveSupport::TestCase
     assert u.errors[:interests].any? { |msg| msg.include?("hacking_the_planet") }
   end
 
+  test "valid when interests is exactly the don't-know sentinel" do
+    u = User.new(slack_id: "U_DK_#{SecureRandom.hex(4)}", display_name: "Skipper", interests: [ User::INTERESTS_UNKNOWN ])
+    u.valid?
+    assert_empty u.errors[:interests]
+  end
+
   test "onboarded? is false when onboarded_at is nil" do
     refute User.new.onboarded?
   end

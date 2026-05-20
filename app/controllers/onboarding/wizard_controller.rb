@@ -23,7 +23,10 @@ class Onboarding::WizardController < ApplicationController
     existing = User.find_by(email: normalized)
 
     if existing&.hca_linked?
-      redirect_to helpers.hack_club_auth_path(login_hint: normalized) and return
+      # OmniAuth 2.x with omniauth-rails_csrf_protection blocks GET, so we
+      # render an auto-submitting POST form instead of redirecting.
+      @login_hint = normalized
+      return render :redirecting_to_hca
     end
 
     if existing
@@ -77,7 +80,13 @@ class Onboarding::WizardController < ApplicationController
   end
 
   def submit_interests
-    selected = Array(params[:interests]) & User::ALLOWED_INTERESTS
+    submitted = Array(params[:interests])
+    if submitted.include?(User::INTERESTS_UNKNOWN)
+      current_user.update!(interests: [ User::INTERESTS_UNKNOWN ])
+      redirect_to onboarding_interests_result_path and return
+    end
+
+    selected = submitted & User::ALLOWED_INTERESTS
     if selected.empty?
       redirect_to onboarding_interests_path, alert: "Pick at least one." and return
     end

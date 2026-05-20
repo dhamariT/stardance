@@ -3,22 +3,27 @@
   <%= render Onboarding::ProgressBarComponent.new(step: :interests_result) %>
 
   <div class="onboarding-screen__content">
-    <h1 class="onboarding-screen__title"><%= onboarding_count_up(2734) %> other teens like that too!</h1>
-    <p class="onboarding-screen__subhead">and <%= onboarding_count_up(820) %> of them are also beginners!</p>
+    <% if @interests == [ User::INTERESTS_UNKNOWN ] %>
+      <h1 class="onboarding-screen__title">that's okay!</h1>
+      <p class="onboarding-screen__subhead">we'll figure it out :D</p>
+    <% else %>
+      <h1 class="onboarding-screen__title"><%= onboarding_count_up(2734) %> other teens like that too!</h1>
+      <p class="onboarding-screen__subhead">and <%= onboarding_count_up(820) %> of them are also beginners!</p>
 
-    <div class="onboarding-interests-result__featured" aria-label="Featured projects">
-      <% 5.times do |i| %>
-        <div class="onboarding-interests-result__featured-card"></div>
-      <% end %>
-    </div>
+      <div class="onboarding-interests-result__featured" aria-label="Featured projects">
+        <% 5.times do |i| %>
+          <div class="onboarding-interests-result__featured-card"></div>
+        <% end %>
+      </div>
 
-    <p class="onboarding-interests-result__prize-label">and they're getting prizes like</p>
-    <div class="onboarding-interests-result__prizes" aria-hidden="true">
-      <%# v1 ships with placeholder boxes; curated photos go in app/assets/images/onboarding/prizes/ once extracted from Figma %>
-      <% 5.times do |i| %>
-        <div class="onboarding-interests-result__prize onboarding-interests-result__prize--<%= i %>"></div>
-      <% end %>
-    </div>
+      <p class="onboarding-interests-result__prize-label">and they're getting prizes like</p>
+      <div class="onboarding-interests-result__prizes" aria-hidden="true">
+        <%# v1 ships with placeholder boxes; curated photos go in app/assets/images/onboarding/prizes/ once extracted from Figma %>
+        <% 5.times do |i| %>
+          <div class="onboarding-interests-result__prize onboarding-interests-result__prize--<%= i %>"></div>
+        <% end %>
+      </div>
+    <% end %>
 
     <%= render SpecialActionButtonComponent.new(
           text: "Next",

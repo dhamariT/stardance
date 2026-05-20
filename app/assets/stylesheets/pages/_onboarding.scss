@@ -530,6 +530,16 @@
     background: rgba(244, 235, 185, 0.15);
     border-color: var(--color-brand-highlight);
   }
+
+  &--unknown {
+    border-style: dashed;
+    grid-column: 1 / -1;
+    height: 96px;
+
+    .onboarding-interests__label {
+      font-size: 1.5rem;
+    }
+  }
 }
 
 .onboarding-interests__checkbox {
