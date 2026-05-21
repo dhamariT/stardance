@@ -21,6 +21,7 @@ module Admin::ReviewsHelper
     return nil if path_parts.empty?
 
     username = path_parts.first
+    return nil if username.blank?
 
     # Detect platform based on host
     platform_info = case host
