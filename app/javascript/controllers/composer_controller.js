@@ -16,6 +16,7 @@ export default class extends Controller {
     maxFiles: { type: Number, default: 4 },
     previewTimeUrl: String,
     hackatimeLinked: { type: Boolean, default: false },
+    simpleMode: { type: Boolean, default: false },
   };
 
   #files = [];
@@ -32,9 +33,11 @@ export default class extends Controller {
   };
 
   connect() {
-    this.#acceptedTypes = this.fileInputTarget.accept
-      .split(",")
-      .map((t) => t.trim());
+    if (this.hasFileInputTarget) {
+      this.#acceptedTypes = this.fileInputTarget.accept
+        .split(",")
+        .map((t) => t.trim());
+    }
     this.element.addEventListener("turbo:frame-load", this.#onTimeFrameLoad);
     this.#resizeTextarea();
     this.#updateSubmit();
@@ -68,7 +71,13 @@ export default class extends Controller {
   }
 
   #updateSubmit() {
-    const enabled = this.#files.length > 0 && this.#previewSeconds >= 15 * 60;
+    let enabled;
+    if (this.simpleModeValue) {
+      enabled =
+        this.hasTextareaTarget && this.textareaTarget.value.trim().length > 0;
+    } else {
+      enabled = this.#files.length > 0 && this.#previewSeconds >= 15 * 60;
+    }
     if (this.hasSubmitTarget) {
       this.submitTarget.disabled = !enabled;
       this.submitTarget.classList.toggle("action-btn--disabled", !enabled);
@@ -79,7 +88,12 @@ export default class extends Controller {
     if (!this.hasTextareaTarget) return;
     const el = this.textareaTarget;
     el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+    // scrollHeight is 0 when the element is inside a hidden dialog (display:none).
+    // In that case leave height as "auto" so the rows attribute dictates the size
+    // once the dialog opens, rather than locking it to 0px.
+    if (el.scrollHeight > 0) {
+      el.style.height = `${el.scrollHeight}px`;
+    }
   }
 
   showInfo() {
