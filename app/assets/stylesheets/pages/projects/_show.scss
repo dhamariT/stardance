@@ -905,6 +905,24 @@ turbo-frame#project_hero {
   color: currentColor;
 }
 
+.project-show__latest-ship-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+
+  &--pending {
+    background: color-mix(in srgb, var(--color-brand-yellow) 18%, transparent);
+    color: var(--color-brand-yellow);
+    border: 1px solid
+      color-mix(in srgb, var(--color-brand-yellow) 40%, transparent);
+  }
+}
+
 .project-show__latest-ship-body {
   display: flex;
   gap: 16px;
@@ -973,8 +991,6 @@ turbo-frame#project_hero {
   font-size: 1.1875rem; // 19px
   line-height: 1.3;
   color: var(--color-space-text);
-  white-space: pre-wrap;
-  word-wrap: break-word;
 }
 
 .project-show__latest-ship-stats {
