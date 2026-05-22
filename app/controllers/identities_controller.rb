@@ -8,7 +8,7 @@ class IdentitiesController < ApplicationController
     uid = HackatimeService.fetch_authenticated_user(access_token) if access_token.present?
 
     if uid.blank?
-      redirect_to home_path, alert: "Could not determine Hackatime user. Try again."
+      redirect_to return_path, alert: "Could not determine Hackatime user. Try again."
       return
     end
 
@@ -35,7 +35,7 @@ class IdentitiesController < ApplicationController
     #   ]
     # end
 
-    redirect_to home_path, notice: "Hackatime linked!"
+    redirect_to return_path, notice: "Hackatime linked!"
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.warn("Hackatime identity save failed: #{e.record.errors.full_messages.join(", ")}")
     alert = if e.record.errors.of_kind?(:uid, :taken)
@@ -44,6 +44,18 @@ class IdentitiesController < ApplicationController
       "Failed to link Hackatime: #{e.record.errors.full_messages.first}"
     end
 
-    redirect_to home_path, alert:
+    redirect_to return_path, alert:
+  end
+
+  private
+
+  # OmniAuth captures the page the user came from (or any `origin` form/query
+  # param) and exposes it as `omniauth.origin` on the callback. Only honor
+  # relative paths so this can't be turned into an open redirect.
+  def return_path
+    origin = request.env["omniauth.origin"].to_s
+    return home_path if origin.blank?
+    return home_path unless origin.start_with?("/") && !origin.start_with?("//")
+    origin
   end
 end

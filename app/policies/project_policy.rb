@@ -52,6 +52,10 @@ class ProjectPolicy < ApplicationPolicy
         member?
     end
 
+    def add_test_time?
+        member?
+    end
+
     private
 
     def member?

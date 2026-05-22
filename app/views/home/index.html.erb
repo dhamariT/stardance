@@ -15,7 +15,11 @@
 
     <% if @feed_posts.any? %>
       <% @feed_posts.each_with_index do |post, index| %>
-        <%= render Posts::CardComponent.new(post: post, current_user: current_user) %>
+        <% if post.postable_type == "Post::ShipEvent" %>
+          <%= render "projects/ship_card", post: post, project: post.project %>
+        <% else %>
+          <%= render Posts::CardComponent.new(post: post, current_user: current_user) %>
+        <% end %>
 
         <% if index.zero? && @recommended_projects.any? %>
           <%= render Feed::ShelfComponent.new(
@@ -44,7 +48,7 @@
         <% end %>
       <% end %>
 
-      <p class="feed-home__empty">No devlogs yet. Post what you are working on to start the feed.</p>
+      <p class="feed-home__empty">Nothing here yet. Post a devlog or ship your project to start the feed.</p>
     <% end %>
   </main>
 

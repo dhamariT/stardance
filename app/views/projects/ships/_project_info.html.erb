@@ -1,19 +1,6 @@
-<% unless @project.shippable? %>
-  <div class="ship__requirements">
-    <p class="ship__requirements-heading">Complete these requirements before shipping:</p>
-    <ul class="ship__requirements-list">
-      <% @project.visual_shipping_requirements.reject { |r| r[:passed] }.each do |req| %>
-        <li class="ship__requirements-item">
-          <%= req[:fail_label] || req[:label] %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
 <%= form_with(
       model: @project,
-      url: project_path(@project, return_to: new_project_ships_path(@project, step: 2)),
+      url: project_path(@project, return_to: review_project_ships_path(@project)),
       method: :patch,
       id: "ship-details-form",
       local: true,
@@ -26,10 +13,27 @@
       }
     ) do |form| %>
 
-  <div class="ship__group">
-    <div class="ship__field">
-      <div class="ship__field-row">
-        <label class="ship__label" for="project_title">Project name</label>
+  <% unless @project.shippable? %>
+    <div class="ship__requirements" data-project-form-target="requirementsContainer">
+      <p class="ship__requirements-heading">Complete these requirements before shipping:</p>
+      <ul class="ship__requirements-list">
+        <% @project.visual_shipping_requirements.reject { |r| r[:passed] }.each do |req| %>
+          <li class="ship__requirements-item" data-req-key="<%= req[:key] %>">
+            <%= req[:fail_label] || req[:label] %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Title, description, and banner are each their own kind of control
+      (row, textarea, image upload) so they live as direct form children and
+      pick up the form's larger inter-section gap. The URL trio below stays
+      in a `.ship__group` so the row-to-row gap inside stays tight. %>
+  <div class="ship__field">
+    <div class="ship__field-row">
+      <label class="ship__label" for="project_title">Project name</label>
+      <%= render StarBorderComponent.new(seed: "ship-title") do %>
         <%= form.text_field :title,
               id: "project_title",
               class: "ship__input",
@@ -38,11 +42,13 @@
                 action: "input->project-form#validateTitle blur->project-form#validateTitle",
                 "project-form-target": "title"
               } %>
-      </div>
+      <% end %>
     </div>
+  </div>
 
-    <div class="ship__field">
-      <label class="ship__label" for="project_description">Project description</label>
+  <div class="ship__field">
+    <label class="ship__label" for="project_description">Project description</label>
+    <%= render StarBorderComponent.new(seed: "ship-description") do %>
       <%= form.text_area :description,
             id: "project_description",
             class: "ship__input ship__input--textarea ship__input--textarea-short",
@@ -52,31 +58,22 @@
               action: "input->project-form#validateDescription blur->project-form#validateDescription",
               "project-form-target": "description"
             } %>
-    </div>
+    <% end %>
+  </div>
 
-    <div class="ship__field">
-      <label class="ship__label">Project banner</label>
-      <p class="ship__hint">This must be a picture of your actual project — not AI-generated art. Show what you built! Upload a JPEG, PNG, WEBP, HEIC, or HEIF up to 10 MB.</p>
-      <div class="ship__upload" data-controller="file-upload" data-file-upload-max-size-value="<%= Project::MAX_BANNER_SIZE %>">
-        <% if @project.banner.attached? %>
-          <div class="ship__upload-preview">
-            <%= image_tag @project.banner, class: "ship__upload-image", data: { "file-upload-target": "preview" } %>
-          </div>
-        <% end %>
-        <label class="ship__upload-dropzone">
-          <%= form.file_field :banner,
-                accept: Project::ACCEPTED_CONTENT_TYPES.join(","),
-                direct_upload: true,
-                class: "ship__upload-input",
-                data: { "file-upload-target": "input", action: "change->file-upload#change" } %>
-          <%= image_tag "projects/ship/upload-placeholder.svg",
-                alt: "",
-                aria: { hidden: true },
-                class: "ship__upload-placeholder" %>
-          <span class="ship__upload-text">Click to upload or drag and drop</span>
-        </label>
-      </div>
-    </div>
+  <div class="ship__field">
+    <label class="ship__label">Project banner</label>
+    <p class="ship__hint">This must be a picture of your actual project — not AI-generated art. Show what you built! Upload a JPEG, PNG, WEBP, HEIC, or HEIF up to 10 MB.</p>
+    <%= render StarImageInputComponent.new(
+          name: "project[banner]",
+          id: "project_banner",
+          accept: Project::ACCEPTED_CONTENT_TYPES.join(","),
+          direct_upload: true,
+          current_url: (url_for(@project.banner) if @project.banner.attached?),
+          current_alt: @project.banner.attached? ? "Current project banner" : "",
+          primary_text: "Drag your banner image",
+          secondary_text: "or click to choose a file"
+        ) %>
   </div>
 
   <div class="ship__group">
@@ -86,15 +83,17 @@
           <label class="ship__label" for="project_demo_url">Playable URL</label>
           <span class="ship__info" title="A live link reviewers can open to try your project." aria-hidden="true">?</span>
         </span>
-        <%= form.url_field :demo_url,
-              id: "project_demo_url",
-              class: "ship__input",
-              placeholder: "https://example.github.io/example",
-              inputmode: "url",
-              data: {
-                action: "input->project-form#validateUrl blur->project-form#validateUrl",
-                "project-form-target": "demoUrl"
-              } %>
+        <%= render StarBorderComponent.new(seed: "ship-demo-url") do %>
+          <%= form.url_field :demo_url,
+                id: "project_demo_url",
+                class: "ship__input",
+                placeholder: "https://example.github.io/example",
+                inputmode: "url",
+                data: {
+                  action: "input->project-form#validateUrl blur->project-form#validateUrl",
+                  "project-form-target": "demoUrl"
+                } %>
+        <% end %>
       </div>
     </div>
 
@@ -104,15 +103,17 @@
           <label class="ship__label" for="project_repo_url">Github URL</label>
           <span class="ship__info" title="Public repository with the source code for this project." aria-hidden="true">?</span>
         </span>
-        <%= form.url_field :repo_url,
-              id: "project_repo_url",
-              class: "ship__input",
-              placeholder: "https://github.com/hackclub/stardance",
-              inputmode: "url",
-              data: {
-                action: "input->project-form#onRepoInput blur->project-form#onRepoBlur",
-                "project-form-target": "repoUrl"
-              } %>
+        <%= render StarBorderComponent.new(seed: "ship-repo-url") do %>
+          <%= form.url_field :repo_url,
+                id: "project_repo_url",
+                class: "ship__input",
+                placeholder: "https://github.com/hackclub/stardance",
+                inputmode: "url",
+                data: {
+                  action: "input->project-form#onRepoInput blur->project-form#onRepoBlur",
+                  "project-form-target": "repoUrl"
+                } %>
+        <% end %>
       </div>
     </div>
 
@@ -124,15 +125,17 @@
           <label class="ship__label" for="project_readme_url">Readme URL</label>
           <span class="ship__info" title="Raw README URL from GitHub. We autofill this from the repo when possible." aria-hidden="true">?</span>
         </span>
-        <%= form.url_field :readme_url,
-              id: "project_readme_url",
-              class: "ship__input",
-              placeholder: "https://raw.githubusercontent.com/hackclub/stardance/refs/heads/main/README.md",
-              inputmode: "url",
-              data: {
-                action: "input->project-form#onReadmeInput input->project-form#validateUrl blur->project-form#validateUrl",
-                "project-form-target": "readmeUrl"
-              } %>
+        <%= render StarBorderComponent.new(seed: "ship-readme-url") do %>
+          <%= form.url_field :readme_url,
+                id: "project_readme_url",
+                class: "ship__input",
+                placeholder: "https://raw.githubusercontent.com/hackclub/stardance/refs/heads/main/README.md",
+                inputmode: "url",
+                data: {
+                  action: "input->project-form#onReadmeInput input->project-form#validateUrl blur->project-form#validateUrl",
+                  "project-form-target": "readmeUrl"
+                } %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -140,10 +143,12 @@
   <div class="ship__field">
     <label class="ship__label" for="project_ai_declaration">AI declaration</label>
     <p class="ship__hint">Describe how you used AI in this project (e.g. "Used ChatGPT for debugging", "GitHub Copilot for code completion"). AI use is OK, but it should feel like your own work! If you didn't use AI, you can state that.</p>
-    <%= form.text_area :ai_declaration,
-          id: "project_ai_declaration",
-          class: "ship__input ship__input--textarea",
-          rows: 3 %>
+    <%= render StarBorderComponent.new(seed: "ship-ai-declaration") do %>
+      <%= form.text_area :ai_declaration,
+            id: "project_ai_declaration",
+            class: "ship__input ship__input--textarea",
+            rows: 3 %>
+    <% end %>
   </div>
 
   <div class="ship__field">
@@ -158,12 +163,14 @@
   </div>
 
   <div class="ship__actions">
+    <%= link_to "← Back", new_project_ships_path(@project), class: "ship__back-link" %>
     <%= render SpecialActionButtonComponent.new(
           text: "Save and continue",
           type: :submit,
           form: "ship-details-form",
           disable_with: "Saving...",
-          disabled: !@project.shippable?
+          disabled: !@project.shippable?,
+          data: { project_form_target: "submit" }
         ) %>
   </div>
 <% end %>

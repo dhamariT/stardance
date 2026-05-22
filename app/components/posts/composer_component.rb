@@ -4,13 +4,14 @@ module Posts
   class ComposerComponent < ViewComponent::Base
     delegate :inline_svg_tag, to: :helpers
 
-    attr_reader :post, :current_user, :projects, :selected_project
+    attr_reader :post, :current_user, :projects, :selected_project, :test_time_granted
 
-    def initialize(post:, current_user:, projects:, selected_project:)
+    def initialize(post:, current_user:, projects:, selected_project:, test_time_granted: false)
       @post = post
       @current_user = current_user
       @projects = projects
       @selected_project = selected_project
+      @test_time_granted = test_time_granted
     end
 
     def enabled?
@@ -26,7 +27,7 @@ module Posts
     end
 
     def hackatime_linked?
-      selected_project&.hackatime_keys&.present?
+      test_time_granted || selected_project&.hackatime_keys&.present?
     end
 
     def preview_time_url

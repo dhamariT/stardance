@@ -1,0 +1,40 @@
+<div class="star-image-input"
+     data-controller="star-image-input"
+     data-state="<%= initial_state %>"
+     data-action="click->star-image-input#open dragenter->star-image-input#dragEnter dragover->star-image-input#dragOver dragleave->star-image-input#dragLeave drop->star-image-input#drop">
+
+  <div class="star-image-input__echo star-image-input__echo--far"></div>
+  <div class="star-image-input__echo star-image-input__echo--near"></div>
+
+  <div class="<%= frame_classes %>">
+    <div class="star-image-input__content">
+      <div class="star-image-input__placeholder" data-star-image-input-target="placeholder" <%= "hidden" if current_url.present? %>>
+        <svg class="star-image-input__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <path d="M21 15l-5-5L5 21"></path>
+        </svg>
+        <p class="star-image-input__primary-text" data-star-image-input-target="primary"><%= initial_primary_text %></p>
+        <p class="star-image-input__secondary-text" data-star-image-input-target="secondary"><%= initial_secondary_text %></p>
+      </div>
+      <div class="star-image-input__preview" data-star-image-input-target="preview" <%= "hidden" if current_url.blank? %>>
+        <% if current_url.present? %>
+          <%= image_tag current_url, alt: current_alt, class: "star-image-input__image" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="star-image-input__progress" data-star-image-input-target="progress" aria-hidden="true">
+      <div class="star-image-input__progress-bar" data-star-image-input-target="progressBar"></div>
+    </div>
+  </div>
+
+  <%= tag.input(
+    type: "file",
+    name: name,
+    id: id,
+    accept: accept,
+    class: "star-image-input__file",
+    data: input_data_attributes
+  ) %>
+</div>

@@ -1,0 +1,182 @@
+.star-image-input {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  cursor: pointer;
+  user-select: none;
+  margin: 1.5rem 0;
+}
+
+.star-image-input__file {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.star-image-input__frame,
+.star-image-input__echo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition:
+    inset 520ms cubic-bezier(.22, 1.32, .36, 1),
+    opacity 320ms ease,
+    border-color 320ms ease;
+}
+
+.star-image-input__frame {
+  display: block;
+}
+
+.star-image-input__echo {
+  border: 1px solid var(--color-brand-off-white);
+  border-radius: 8px;
+}
+
+.star-image-input__echo--near {
+  inset: 16px;
+  opacity: 0.32;
+}
+
+.star-image-input__echo--far {
+  inset: 32px;
+  opacity: 0.14;
+}
+
+// dragging: echoes burst outward toward the frame, near leads
+.star-image-input[data-state="dragging"] .star-image-input__echo--near {
+  inset: 6px;
+  opacity: 0.7;
+  border-color: var(--color-brand-mint);
+  transition-delay: 0ms;
+}
+
+.star-image-input[data-state="dragging"] .star-image-input__echo--far {
+  inset: 12px;
+  opacity: 0.45;
+  border-color: var(--color-brand-mint);
+  transition-delay: 70ms;
+}
+
+// loading: echoes collapse inward toward center
+.star-image-input[data-state="loading"] .star-image-input__echo--near {
+  inset: 32px;
+  opacity: 0.7;
+}
+
+.star-image-input[data-state="loading"] .star-image-input__echo--far {
+  inset: 56px;
+  opacity: 0.4;
+}
+
+// loaded: rings stay pushed out near the frame to frame the image
+.star-image-input[data-state="loaded"] .star-image-input__echo--near {
+  inset: 6px;
+  opacity: 0.45;
+}
+
+.star-image-input[data-state="loaded"] .star-image-input__echo--far {
+  inset: 12px;
+  opacity: 0.22;
+}
+
+.star-image-input[data-state="error"] .star-image-input__primary-text {
+  color: var(--color-brand-salmon);
+}
+
+.star-image-input__content {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-areas: "stack";
+  padding: 0.5rem;
+  min-height: 0;
+}
+
+.star-image-input__placeholder,
+.star-image-input__preview {
+  grid-area: stack;
+  min-width: 0;
+  min-height: 0;
+}
+
+.star-image-input__placeholder {
+  display: grid;
+  place-items: center;
+  gap: 0.4rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--color-brand-off-white);
+  transition: opacity 200ms ease;
+}
+
+.star-image-input__placeholder[hidden] {
+  display: none;
+}
+
+.star-image-input[data-state="loading"] .star-image-input__placeholder {
+  opacity: 0.55;
+}
+
+.star-image-input__icon {
+  width: 36px;
+  height: 36px;
+  color: var(--color-brand-off-white);
+  opacity: 0.85;
+}
+
+.star-image-input__primary-text {
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: color 220ms ease;
+}
+
+.star-image-input__secondary-text {
+  font-size: 0.875rem;
+  opacity: 0.6;
+}
+
+.star-image-input__preview {
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.star-image-input__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.star-image-input__progress {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1rem;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 240ms ease;
+  pointer-events: none;
+}
+
+.star-image-input[data-state="loading"] .star-image-input__progress {
+  opacity: 1;
+}
+
+.star-image-input__progress-bar {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-mint),
+    var(--color-brand-lilac)
+  );
+  border-radius: 999px;
+  transition: width 120ms linear;
+}

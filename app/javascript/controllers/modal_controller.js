@@ -63,6 +63,12 @@ export default class extends Controller {
       return;
     }
 
+    // A real backdrop click on a <dialog> fires with event.target === the
+    // dialog itself. Clicks on inner content (including synthetic ones from
+    // things like fileInput.click(), which bubble up at coords 0,0) have
+    // event.target on the descendant — never treat those as backdrop hits.
+    if (event.target !== this.element) return;
+
     const rect = this.element.getBoundingClientRect();
     const clickedInside =
       event.clientX >= rect.left &&

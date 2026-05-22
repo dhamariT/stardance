@@ -15,21 +15,31 @@ class HomeController < ApplicationController
   private
 
   def load_feed
-    posts = Post.of_devlogs(join: true)
-                .where(post_devlogs: { deleted_at: nil })
-                .includes(:user, :project, devlog: { attachments_attachments: :blob })
-                .order(created_at: :desc)
-                .limit(20)
+    devlogs = Post.of_devlogs(join: true)
+                  .where(post_devlogs: { deleted_at: nil })
+                  .includes(:user, :project, devlog: { attachments_attachments: :blob })
+                  .order(created_at: :desc)
+                  .limit(20)
 
-    @feed_posts = posts.select { |post| post.postable.present? }
+    ship_events = Post.of_ship_events(join: true)
+                      .where.not(post_ship_events: { certification_status: "rejected" })
+                      .includes(:user, :project)
+                      .order(created_at: :desc)
+                      .limit(20)
+
+    all_posts = (devlogs.to_a + ship_events.to_a)
+                  .sort_by { |p| -p.created_at.to_i }
+                  .first(20)
+
+    @feed_posts = all_posts.select { |post| post.postable.present? }
     @liked_devlog_ids = liked_devlog_ids_for(@feed_posts)
   end
 
   def liked_devlog_ids_for(posts)
-    devlog_ids = posts.map(&:postable_id)
-    return Set.new if devlog_ids.empty?
+    devlog_posts = posts.select { |p| p.postable_type == "Post::Devlog" }
+    return Set.new if devlog_posts.empty?
 
-    Like.where(user: current_user, likeable_type: "Post::Devlog", likeable_id: devlog_ids).pluck(:likeable_id).to_set
+    Like.where(user: current_user, likeable_type: "Post::Devlog", likeable_id: devlog_posts.map(&:postable_id)).pluck(:likeable_id).to_set
   end
 
   def load_composer

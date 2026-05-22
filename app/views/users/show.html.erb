@@ -56,6 +56,16 @@
 
           <div class="profile__identity-text">
             <h1 class="profile__handle">@<%= @user.display_name %></h1>
+            <% if own_profile %>
+              <div class="profile__handle-edit">
+                <span class="profile__handle-edit-at" aria-hidden="true">@</span>
+                <%= f.text_field :display_name,
+                                 class: "profile__handle-input",
+                                 maxlength: 60,
+                                 required: true,
+                                 aria: { label: "Display name" } %>
+              </div>
+            <% end %>
             <p class="profile__joined">Joined <%= @user.created_at.to_date.strftime("%-d %b %Y").downcase %></p>
           </div>
         </div>
@@ -157,8 +167,6 @@
 <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
   <% [
     [ "feed",     "Feed",                         user_path(@user) ],
-    [ "devlogs",  "Devlogs",                      devlogs_user_path(@user) ],
-    [ "replies",  "Replies",                      replies_user_path(@user) ],
     [ "projects", "Projects (#{@stats[:projects_count]})", projects_user_path(@user) ]
   ].each do |key, label, path| %>
     <% tab_active = (@active_tab == key) %>
@@ -175,14 +183,16 @@
   <% case @active_tab %>
   <% when "feed" %>
     <% if @activity.any? %>
-      <%= render PostComponent.with_collection(@activity, current_user: current_user, theme: :profile_dark) %>
+      <% @activity.each do |post| %>
+        <% if post.postable_type == "Post::ShipEvent" %>
+          <%= render "projects/ship_card", post: post, project: post.project %>
+        <% else %>
+          <%= render PostComponent.new(post: post, current_user: current_user, theme: :profile_dark) %>
+        <% end %>
+      <% end %>
     <% else %>
       <p class="profile-tab-content__empty">No activity yet.</p>
     <% end %>
-  <% when "devlogs" %>
-    <p class="profile-tab-content__empty">No devlogs yet.</p>
-  <% when "replies" %>
-    <p class="profile-tab-content__empty">No replies yet.</p>
   <% when "projects" %>
     <% if @projects.any? %>
       <ul class="project-list">

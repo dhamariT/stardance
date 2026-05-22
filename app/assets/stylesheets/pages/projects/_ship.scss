@@ -2,36 +2,13 @@
   --ship-form-width: clamp(640px, 52vw, 870px);
   --ship-composer-width: clamp(680px, 56vw, 922px);
   --ship-stepper-width: min(100%, calc(var(--ship-form-width) * 1.48));
-  --ship-copy-size: clamp(18px, 1.15vw, 22px);
 
   position: relative;
   min-height: 100vh;
-  padding: 48px clamp(20px, 2.4vw, 46px) 88px;
+  padding: var(--space-xxxl) clamp(20px, 2.4vw, 46px) var(--space-xxxxl);
   overflow-x: clip;
   color: var(--color-space-text);
   background: var(--color-set-1-bg);
-
-  &__background {
-    position: fixed;
-    z-index: 0;
-    left: 50%;
-    bottom: max(-31vw, -461px);
-    width: max(1500px, 115vw);
-    max-width: none;
-    opacity: 0.33;
-    transform: translateX(-50%) translateY(28%);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  &__logo {
-    position: absolute;
-    z-index: 2;
-    top: 48px;
-    left: clamp(20px, 2.4vw, 46px);
-    width: clamp(145px, 11.5vw, 220px);
-    height: auto;
-  }
 
   &__header,
   &__stepper,
@@ -51,11 +28,11 @@
 
   &__back {
     position: absolute;
-    top: calc(60px + clamp(72px, 5.5vw, 104px));
+    top: var(--space-xxxl);
     left: clamp(20px, 2.4vw, 46px);
     z-index: 2;
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     color: var(--color-brand-highlight);
     text-decoration: none;
 
@@ -71,20 +48,25 @@
     align-items: center;
   }
 
+  // Small heading per branding §2.1 — Exo 2 bold 19px, ALL CAPS. The "Let's
+  // ship" kicker above the project title is the canonical eyebrow role.
   &__eyebrow {
     display: block;
     font-family: var(--font-family-text);
-    font-size: clamp(30px, 2.4vw, 40px);
+    font-size: var(--font-body);
     font-weight: 700;
     line-height: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--color-space-text);
   }
 
+  // Title per branding §2.1 — Playfair Display bold italic, 70px.
   &__project-name {
     display: block;
     margin: 0;
     font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-    font-size: clamp(48px, 4vw, 70px);
+    font-size: 4.375rem;
     font-weight: 700;
     font-style: italic;
     line-height: var(--line-height-headers);
@@ -97,7 +79,7 @@
     align-items: start;
     width: var(--ship-stepper-width);
     min-height: 84px;
-    margin: 52px auto 18px;
+    margin: var(--space-xxl) auto var(--space-xxxl);
   }
 
   &__stepper-line {
@@ -108,6 +90,22 @@
     height: 1px;
     background: rgba(255, 255, 255, 0.72);
     pointer-events: none;
+
+    // Soft-fade the line where each star sits. Three radial-gradient masks
+    // — one centered on each column (1/6, 3/6, 5/6 of the stepper width) —
+    // composited with `intersect` so the line is hidden wherever ANY layer
+    // is transparent. Beats the Figma approach of overlaying a bg-coloured
+    // rectangle because the fade is soft and stays bound to the line.
+    mask-image:
+      radial-gradient(circle 56px at 16.67% 50%, transparent 0, transparent 28px, #000 56px),
+      radial-gradient(circle 56px at 50% 50%,    transparent 0, transparent 28px, #000 56px),
+      radial-gradient(circle 56px at 83.33% 50%, transparent 0, transparent 28px, #000 56px);
+    mask-composite: intersect;
+    -webkit-mask-image:
+      radial-gradient(circle 56px at 16.67% 50%, transparent 0, transparent 28px, #000 56px),
+      radial-gradient(circle 56px at 50% 50%,    transparent 0, transparent 28px, #000 56px),
+      radial-gradient(circle 56px at 83.33% 50%, transparent 0, transparent 28px, #000 56px);
+    -webkit-mask-composite: source-in;
   }
 
   &__stepper-step {
@@ -127,7 +125,7 @@
     place-items: center;
     width: 126px;
     height: 70px;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-xxxs);
   }
 
   &__stepper-star {
@@ -139,25 +137,30 @@
     filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
   }
 
+  // Upcoming steps signal "not yet" via the outline star variant; the
+  // completed/active steps use the filled colored variants. No global
+  // opacity dim — the outline already reads as quieter.
   &__stepper-step--upcoming {
-    opacity: 0.5;
+    .ship__stepper-label {
+      opacity: 0.65;
+    }
   }
 
   &__stepper-label {
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     font-weight: 700;
     line-height: normal;
     text-align: center;
     white-space: nowrap;
   }
 
+  // Body per branding §2.1 — no italic at non-title sizes (§2.2).
   &__subtitle {
     max-width: var(--ship-form-width);
-    margin: 0 auto 30px;
+    margin: 0 auto var(--space-xl);
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
-    font-style: italic;
+    font-size: var(--font-body);
     line-height: normal;
     text-align: center;
     color: var(--color-space-text);
@@ -166,7 +169,7 @@
   &__video {
     width: 100%;
     max-width: var(--ship-form-width);
-    margin: 0 auto 32px;
+    margin: 0 auto var(--space-xl);
   }
 
   &__body {
@@ -179,22 +182,26 @@
     }
   }
 
+  // Spacing rhythm (top-down):
+  //   form (groups) -> space-xl  (32px)
+  //   group (fields) -> space-m  (16px)
+  //   field (label/control rows) -> space-xs (8px)
   &__form {
     display: flex;
     flex-direction: column;
-    gap: clamp(44px, 3.4vw, 64px);
+    gap: var(--space-xl);
   }
 
   &__group {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-m);
   }
 
   &__field {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 
     &[hidden] {
       display: none;
@@ -212,7 +219,7 @@
   &__label-with-info {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-xxxs);
   }
 
   &__info {
@@ -235,31 +242,57 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--space-m);
 
     .ship__label,
     .ship__label-with-info {
       flex-shrink: 0;
     }
 
-    .ship__input {
+    // Bare input (unwrapped) takes the flex slot directly. When wrapped in
+    // a StarBorderComponent the .star-border wrapper takes the slot instead
+    // and its inner input fills it.
+    > .ship__input,
+    > .star-border {
       flex: 1;
       max-width: min(700px, calc(var(--ship-form-width) - 170px));
     }
   }
 
+  // When .ship__input lives inside a StarBorderComponent wrapper, the
+  // wrapper provides the chrome (star-cutout border + sizing), so strip
+  // the input's own border / fill so we don't double up. The input keeps
+  // its typography (font-family, font-size, color) from the base rule.
+  .star-border {
+    .ship__input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+      padding: var(--space-xs) var(--space-m);
+    }
+
+    .ship__input--textarea {
+      // Textareas keep their own min-height; the tall star-border variant
+      // grows to match.
+      height: auto;
+    }
+  }
+
+  // Form label per branding §5.1 — Exo 2 16px (Label token).
   &__label {
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-size-m);
     font-weight: 700;
     line-height: normal;
     color: var(--color-space-text);
   }
 
+  // Hint / fine print — Label token per branding §2.1.
   &__hint {
     margin: 0;
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-size-m);
     line-height: normal;
     color: var(--color-space-text);
     opacity: 0.5;
@@ -268,13 +301,13 @@
   &__input {
     width: 100%;
     height: 45px;
-    padding: 4px 8px;
+    padding: var(--space-xxxs) var(--space-xs);
     border: 2px solid hsla(0, 0%, 100%, 0.5);
     border-radius: var(--profile-radius);
     background: var(--color-set-1-bg);
     color: var(--color-space-text);
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     line-height: normal;
     outline: none;
     transition: border-color 0.15s ease;
@@ -302,7 +335,7 @@
   &__upload {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-s);
   }
 
   &__upload-preview {
@@ -363,13 +396,21 @@
     border: 2px solid var(--color-brand-salmon);
     border-radius: var(--profile-radius);
     background: var(--color-brand-salmon-soft);
-    margin-bottom: var(--space-xl);
+    // Sits inside `.ship__form` (which has a `--space-xl` flex gap between
+    // items). Cancel that gap with a negative margin so the requirements
+    // banner reads as attached to the form fields below, leaving a tight
+    // `--space-m` visual gap.
+    margin-bottom: calc(var(--space-m) - var(--space-xl));
   }
 
+  // Small heading per branding §2.1 — Exo 2 bold 19px, ALL CAPS.
   &__requirements-heading {
     margin: 0 0 var(--space-s);
+    font-family: var(--font-family-text);
     font-weight: 700;
-    font-size: var(--font-size-l);
+    font-size: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--color-brand-salmon);
   }
 
@@ -390,14 +431,14 @@
   &__checkbox {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: var(--space-m);
     cursor: pointer;
   }
 
   &__checkbox-input {
     width: 21px;
     height: 21px;
-    margin: 6px 0 0;
+    margin: var(--space-xxs) 0 0;
     flex-shrink: 0;
     border: 1px solid var(--color-space-text);
     border-radius: 3px;
@@ -413,14 +454,14 @@
 
   &__checkbox-text {
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     line-height: normal;
     color: var(--color-space-text);
   }
 
   &__mission-attached {
     min-height: 52px;
-    padding: 8px 12px;
+    padding: var(--space-xs) var(--space-s);
     display: flex;
     align-items: center;
     border: 2px solid hsla(0, 0%, 100%, 0.5);
@@ -430,7 +471,7 @@
 
   &__mission-name {
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     color: var(--color-space-text);
   }
 
@@ -438,14 +479,14 @@
     width: 100%;
     min-height: 52px;
     margin: 0;
-    padding: 8px 12px;
+    padding: var(--space-xs) var(--space-s);
     display: flex;
     align-items: center;
     border: 2px solid hsla(0, 0%, 100%, 0.5);
     border-radius: var(--profile-radius);
     background: var(--color-set-1-bg);
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     color: hsla(0, 0%, 100%, 0.5);
   }
 
@@ -458,18 +499,15 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 16px;
-    padding-top: 16px;
-  }
-
-  &__actions--step3 {
-    justify-content: flex-start;
-    padding-top: 20px;
+    gap: var(--space-m);
+    // No extra padding-top — the form's `--space-xl` gap already separates
+    // this row from the preceding field. An extra `padding-top` would push
+    // the gap to 48px, out of sync with the 32px rhythm everywhere else.
   }
 
   &__back-link {
     font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
+    font-size: var(--font-body);
     color: var(--color-brand-highlight);
     text-decoration: none;
 
@@ -479,133 +517,27 @@
     }
   }
 
-  &__composer {
-    width: 100%;
-  }
-
-  &__composer-card {
-    position: relative;
-    min-height: clamp(360px, 28vw, 440px);
-    border: 2px solid #5e6687;
-    border-radius: var(--profile-radius);
-    background: var(--color-set-1-bg);
-    padding: 20px clamp(24px, 2vw, 32px) 20px clamp(72px, 5.4vw, 89px);
-  }
-
-  &__composer-chips {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  &__composer-chip {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 6px 12px;
-    border: 1px solid #5e6687;
-    border-radius: 999px;
-    font-family: var(--font-family-text);
-    font-size: 18px;
-    line-height: 1;
-    color: var(--color-space-text);
-    background: rgba(94, 102, 135, 0.3);
-  }
-
-  &__composer-main {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  &__composer-avatar {
-    position: absolute;
-    top: 61px;
-    left: 22px;
-    width: 57px;
-    height: 57px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  &__composer-field {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__composer-textarea {
-    width: 100%;
-    min-height: 132px;
-    border: 0;
-    resize: vertical;
-    background: transparent;
-    color: var(--color-space-text);
-    font-family: var(--font-family-text);
-    font-size: var(--ship-copy-size);
-    line-height: 1.2;
-    outline: none;
-
-    &::placeholder {
-      color: hsla(0, 0%, 100%, 0.5);
-      opacity: 1;
-    }
-  }
-
-  &__composer-preview {
-    margin-top: 27px;
+  &__banner-preview {
+    margin-top: var(--space-s);
     border-radius: var(--profile-radius);
     overflow: hidden;
   }
 
-  &__composer-banner {
+  &__banner-preview-image {
     display: block;
     width: 100%;
     height: 121px;
-    border-radius: var(--profile-radius);
     object-fit: cover;
   }
 
-  &__composer-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 16px;
-
-    .special-action-btn {
-      min-height: 40px;
-      padding: 3px 28px;
-      outline: 0;
-      font-size: var(--ship-copy-size);
-
-      &__star {
-        display: none;
-      }
-    }
-  }
-
-  &__composer-tools {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  &__composer-tool {
-    width: 24px;
-    height: 24px;
-    display: inline-grid;
-    place-items: center;
-    color: hsla(0, 0%, 100%, 0.65);
-    cursor: default;
-  }
-
-  &__composer-tool-icon {
-    width: 20px;
-    height: 20px;
+  // The shared `.star-image-input` component caps at 600px; on this page
+  // the banner upload should fill the full form column.
+  .star-image-input {
+    max-width: none;
   }
 
   @media (max-width: 1100px) {
-    padding-top: 28px;
+    padding-top: var(--space-l);
 
     &__background {
       width: max(1200px, 220vw);
@@ -618,7 +550,7 @@
       left: auto;
       display: block;
       width: 190px;
-      margin: 0 auto 24px;
+      margin: 0 auto var(--space-l);
     }
 
     &__header {
@@ -630,30 +562,29 @@
       top: auto;
       left: auto;
       display: inline-flex;
-      margin: 0 auto 24px;
+      margin: 0 auto var(--space-l);
     }
 
     &__stepper {
-      margin-top: 40px;
+      margin-top: var(--space-xxl);
     }
   }
 
   @media (max-width: 760px) {
-    padding: 24px 16px 64px;
+    padding: var(--space-l) var(--space-m) var(--space-xxxxl);
 
-    &__eyebrow {
-      font-size: 32px;
-    }
-
+    // Brand offers no responsive Title value — at narrow widths the
+    // canonical 70px overflows, so step it down to Title 2 (56px). The
+    // eyebrow inherits the global `--font-body` shrink and needs no override.
     &__project-name {
-      font-size: clamp(42px, 15vw, 56px);
+      font-size: 3.5rem; // Title 2 (56px)
       overflow-wrap: anywhere;
     }
 
     &__stepper {
-      gap: 8px;
+      gap: var(--space-xs);
       min-height: 92px;
-      margin-top: 32px;
+      margin-top: var(--space-xl);
     }
 
     &__stepper-line {
@@ -670,18 +601,6 @@
       max-height: 64px;
     }
 
-    &__stepper-label,
-    &__subtitle,
-    &__label,
-    &__hint,
-    &__input,
-    &__checkbox-text,
-    &__mission-name,
-    &__mission-none,
-    &__back-link {
-      font-size: 18px;
-    }
-
     &__stepper-label {
       white-space: normal;
     }
@@ -696,26 +615,7 @@
     }
 
     &__form {
-      gap: 40px;
-    }
-
-    &__composer-card {
-      min-height: 380px;
-      padding: 20px;
-    }
-
-    &__composer-avatar {
-      position: static;
-      width: 48px;
-      height: 48px;
-    }
-
-    &__composer-main {
-      gap: 12px;
-    }
-
-    &__composer-footer {
-      flex-wrap: wrap;
+      gap: var(--space-xl);
     }
   }
 }

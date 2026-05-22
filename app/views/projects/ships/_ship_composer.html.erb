@@ -1,56 +1,73 @@
-<%= form_with(
-      url: project_ships_path(@project),
-      method: :post,
-      id: "ship-form",
-      local: true,
-      class: "ship__composer"
-    ) do |form| %>
+<%# Wrap the composer + page-level actions in a single controller scope so
+    the "Ship and post" SpecialActionButton (rendered outside the .feed-composer
+    section, at the bottom of the page) is still a descendant of the composer
+    controller. That keeps `data-composer-target="submit"` resolvable and lets
+    the live enable-as-you-type behavior reach the button. %>
+<div data-controller="composer emoji-picker"
+     data-composer-simple-mode-value="true">
+  <section class="feed-composer"
+           aria-label="Ship your project"
+           data-composer-target="dropZone"
+           data-action="drop->composer#drop dragover->composer#dragover dragleave->composer#dragleave">
 
-  <div class="ship__composer-card">
-    <div class="ship__composer-chips">
-      <span class="ship__composer-chip ship__composer-chip--active"><%= @project.title %></span>
+    <div class="feed-composer__chips">
+      <span class="feed-composer__chip feed-composer__chip--active"><%= @project.title %></span>
     </div>
 
-    <div class="ship__composer-main">
-      <%= image_tag current_user.avatar, alt: "", class: "ship__composer-avatar" %>
+    <%= form_with(
+          url: project_ships_path(@project),
+          method: :post,
+          id: "ship-form",
+          html: { data: { composer_target: "form", action: "paste->composer#paste", turbo_frame: "_top" } },
+          class: "feed-composer__form",
+          local: true
+        ) do |form| %>
 
-      <div class="ship__composer-field">
-        <%= form.text_area :ship_update,
-              class: "ship__composer-textarea",
-              rows: 5,
-              required: true,
-              placeholder: "What did you make? What was challenging? What are you proud of?" %>
+      <div class="feed-composer__main">
+        <%= image_tag current_user.avatar, alt: "", class: "feed-composer__avatar" %>
+
+        <div class="feed-composer__field">
+          <%= form.label :ship_update, "What did you make?", class: "feed-composer__label" %>
+          <%= form.text_area :ship_update,
+                class: "feed-composer__textarea",
+                rows: 1,
+                required: true,
+                placeholder: "What did you make? What was challenging? What are you proud of?",
+                aria: { label: "Ship update" },
+                data: { composer_target: "textarea",
+                        emoji_picker_target: "textarea",
+                        action: "focus->composer#showInfo input->composer#autogrow input->composer#refreshSubmit blur->composer#collapseIfEmpty" } %>
+        </div>
       </div>
-    </div>
 
-    <% if @project.banner.attached? %>
-      <div class="ship__composer-preview">
-        <%= image_tag @project.banner, class: "ship__composer-banner" %>
+      <div class="feed-composer__toolbar">
+        <div class="feed-composer__tools">
+          <div class="feed-composer__emoji-wrap">
+            <button type="button"
+                    class="feed-composer__tool-btn"
+                    aria-label="Add emoji"
+                    data-emoji-picker-target="trigger"
+                    data-action="emoji-picker#toggle">
+              <%= inline_svg_tag "icons/emoji.svg", class: "feed-composer__tool-icon" %>
+            </button>
+            <div class="feed-composer__emoji-popover"
+                 data-emoji-picker-target="popover"
+                 hidden></div>
+          </div>
+        </div>
       </div>
     <% end %>
+  </section>
 
-    <div class="ship__composer-footer">
-      <div class="ship__composer-tools">
-        <span class="ship__composer-tool" aria-label="Attach media">
-          <%= inline_svg_tag "icons/paper.svg", class: "ship__composer-tool-icon" %>
-        </span>
-        <span class="ship__composer-tool" aria-label="Emoji">
-          <%= inline_svg_tag "icons/star_outline.svg", class: "ship__composer-tool-icon" %>
-        </span>
-      </div>
-
-      <%= render SpecialActionButtonComponent.new(
-            text: "Ship and post!",
-            type: :submit,
-            form: "ship-form",
-            disable_with: "Shipping...",
-            icon: nil,
-            disabled: !@project.shippable?
-          ) %>
-    </div>
+  <div class="ship__actions">
+    <%= link_to "← Back", review_project_ships_path(@project), class: "ship__back-link" %>
+    <%= render SpecialActionButtonComponent.new(
+          text: "Ship and post",
+          type: :submit,
+          form: "ship-form",
+          disable_with: "Shipping...",
+          disabled: !@project.shippable?,
+          data: { composer_target: "submit" }
+        ) %>
   </div>
-
-  <div class="ship__actions ship__actions--step3">
-    <%= link_to "← Back", new_project_ships_path(@project, step: 2), class: "ship__back-link" %>
-  </div>
-<% end %>
+</div>

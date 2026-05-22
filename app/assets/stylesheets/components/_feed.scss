@@ -363,14 +363,13 @@
     position: relative;
     overflow: hidden;
     border-radius: calc(var(--border-radius) * 0.4);
-    background: rgba(217, 217, 217, 0.45);
   }
 
   &__preview-image,
   &__preview-video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
   }
 
@@ -492,24 +491,20 @@
 
   &__media-viewport {
     width: 100%;
-    aspect-ratio: 16 / 9;
     border-radius: calc(var(--border-radius) * 0.65);
     overflow: hidden;
-    background: rgba(217, 217, 217, 0.82);
     position: relative;
   }
 
   &__media-track {
     display: flex;
     width: 100%;
-    height: 100%;
     transition: transform 220ms ease;
   }
 
   &__media-slide {
     flex: 0 0 100%;
     width: 100%;
-    height: 100%;
     display: grid;
     place-items: center;
     margin: 0;
@@ -518,15 +513,8 @@
   &__image,
   &__video {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
-  }
-
-  &__image {
-    object-fit: cover;
-  }
-
-  &__video {
     object-fit: contain;
   }
 

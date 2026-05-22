@@ -11,11 +11,25 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to @user, notice: "Profile updated."
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = "Profile updated."
+          render turbo_stream: turbo_stream.update("flash-region", partial: "shared/flash")
+        end
+        format.html { redirect_to @user, notice: "Profile updated." }
+      end
     else
-      flash.now[:alert] = @user.errors.full_messages.to_sentence
-      load_profile("feed")
-      render :show, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = @user.errors.full_messages.to_sentence
+          render turbo_stream: turbo_stream.update("flash-region", partial: "shared/flash"), status: :unprocessable_entity
+        end
+        format.html do
+          flash.now[:alert] = @user.errors.full_messages.to_sentence
+          load_profile("feed")
+          render :show, status: :unprocessable_entity
+        end
+      end
     end
   end
 
@@ -65,13 +79,19 @@ class UsersController < ApplicationController
                 .preload(:project, :user, postable: [ { attachments_attachments: :blob } ])
                 .order(created_at: :desc)
 
-    scope = hide_deleted_devlogs(scope)  unless policy(@user).view_deleted_devlogs?
+    scope = hide_deleted_devlogs(scope) unless policy(@user).view_deleted_devlogs?
+    scope = hide_rejected_ships(scope)
     scope
   end
 
   def hide_deleted_devlogs(scope)
     deleted_ids = Post::Devlog.unscoped.deleted.pluck(:id)
     scope.where.not(postable_type: "Post::Devlog", postable_id: deleted_ids)
+  end
+
+  def hide_rejected_ships(scope)
+    rejected_ids = Post::ShipEvent.where(certification_status: "rejected").pluck(:id)
+    scope.where.not(postable_type: "Post::ShipEvent", postable_id: rejected_ids)
   end
 
   def profile_stats
@@ -85,6 +105,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:bio, :banner)
+    params.require(:user).permit(:bio, :banner, :display_name)
   end
 end

@@ -10,7 +10,20 @@ export default class extends Controller {
     "readmeUrl",
     "readmeContainer",
     "submit",
+    "requirementsContainer",
   ];
+
+  // Maps form-field keys → the requirement keys they satisfy. Reachability
+  // / format checks live downstream of presence — we hide them optimistically
+  // when the user enters *anything* for the URL; if the server later rejects
+  // them at save time, they'll re-render.
+  static FIELD_REQUIREMENT_MAP = {
+    description: ["description"],
+    demo_url: ["demo_url", "demo_url_reachable"],
+    repo_url: ["repo_url", "repo_url_format", "repo_cloneable"],
+    readme_url: ["readme_url", "readme_url_reachable"],
+    banner: ["banner"],
+  };
 
   static values = {
     readmeLockedClass: {
@@ -23,6 +36,7 @@ export default class extends Controller {
     this.submitting = false;
     this.userEditedReadme = false;
     this.debouncedDetect = this.debounce(() => this.detectReadme(), 400);
+    this.boundRecheck = () => this.recheckRequirements();
 
     this.element.addEventListener("direct-upload:end", () => {
       this.submitting = false;
@@ -32,7 +46,13 @@ export default class extends Controller {
       if (this.hasSubmitTarget) this.submitTarget.disabled = false;
     });
 
+    // Delegated listeners on the form so we catch every field, including
+    // file inputs nested inside StarImageInputComponent.
+    this.element.addEventListener("input", this.boundRecheck);
+    this.element.addEventListener("change", this.boundRecheck);
+
     this.restoreReadmeState();
+    this.recheckRequirements();
 
     if (
       this.hasRepoUrlTarget &&
@@ -41,6 +61,70 @@ export default class extends Controller {
     ) {
       setTimeout(() => this.detectReadme(), 0);
     }
+  }
+
+  disconnect() {
+    this.element.removeEventListener("input", this.boundRecheck);
+    this.element.removeEventListener("change", this.boundRecheck);
+  }
+
+  recheckRequirements() {
+    if (!this.hasRequirementsContainerTarget) return;
+
+    const filled = {
+      description: this.hasDescriptionTarget && this.fieldFilled(this.descriptionTarget),
+      demo_url: this.hasDemoUrlTarget && this.fieldFilled(this.demoUrlTarget),
+      repo_url: this.hasRepoUrlTarget && this.fieldFilled(this.repoUrlTarget),
+      readme_url: this.hasReadmeUrlTarget && this.fieldFilled(this.readmeUrlTarget),
+      banner: this.bannerFilled(),
+    };
+
+    const satisfied = new Set();
+    for (const [field, isFilled] of Object.entries(filled)) {
+      if (!isFilled) continue;
+      const reqs = this.constructor.FIELD_REQUIREMENT_MAP[field] || [];
+      reqs.forEach((k) => satisfied.add(k));
+    }
+
+    let remaining = 0;
+    this.requirementsContainerTarget
+      .querySelectorAll("[data-req-key]")
+      .forEach((li) => {
+        const key = li.dataset.reqKey;
+        const hide = satisfied.has(key);
+        li.hidden = hide;
+        if (!hide) remaining += 1;
+      });
+
+    this.requirementsContainerTarget.hidden = remaining === 0;
+
+    if (this.hasSubmitTarget) {
+      const wasDisabled = this.submitTarget.disabled;
+      const shouldDisable = remaining > 0;
+      if (wasDisabled !== shouldDisable) {
+        this.submitTarget.disabled = shouldDisable;
+        this.submitTarget.classList.toggle(
+          "special-action-btn--disabled",
+          shouldDisable,
+        );
+      }
+    }
+  }
+
+  fieldFilled(target) {
+    if (!target) return false;
+    return (target.value || "").trim().length > 0;
+  }
+
+  bannerFilled() {
+    const input = this.element.querySelector(
+      'input[type="file"][name="project[banner]"]',
+    );
+    if (input && input.files && input.files.length > 0) return true;
+    // If the project already has a banner attached (server-rendered) the
+    // `banner` requirement was never in the list to begin with — recheck
+    // still works either way.
+    return false;
   }
 
   validateTitle(event) {

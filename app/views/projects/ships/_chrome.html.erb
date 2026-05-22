@@ -1,0 +1,61 @@
+<% content_for :title, "Ship Project" %>
+
+<div class="ship">
+  <%= link_to "← back to Stardance", project_path(@project), class: "ship__back" %>
+
+  <div class="ship__header">
+    <div class="ship__titles">
+      <span class="ship__eyebrow">Let's ship</span>
+      <h1 class="ship__project-name"><%= @project.title %></h1>
+    </div>
+  </div>
+
+  <%= turbo_frame_tag "ship-step", data: { turbo_action: "advance" } do %>
+    <nav class="ship__stepper" aria-label="Ship progress">
+      <div class="ship__stepper-line"></div>
+
+      <% steps = [
+        { number: 1, label: "Project info",        filled: "projects/ship/step-project-info.png", outline: "projects/ship/step-project-info--outline.png" },
+        { number: 2, label: "Review instructions", filled: "projects/ship/step-review.png",       outline: "projects/ship/step-review--outline.png" },
+        { number: 3, label: "Ship!",               filled: "projects/ship/step-ship.png",         outline: "projects/ship/step-ship--outline.png" }
+      ] %>
+
+      <% steps.each do |s| %>
+        <% active = s[:number] == @step %>
+        <% completed = s[:number] < @step %>
+        <% upcoming = s[:number] > @step %>
+        <% step_classes = [
+          "ship__stepper-step",
+          ("ship__stepper-step--active" if active),
+          ("ship__stepper-step--completed" if completed),
+          ("ship__stepper-step--upcoming" if upcoming)
+        ].compact %>
+        <% star_image = upcoming ? s[:outline] : s[:filled] %>
+
+        <%= tag.div class: step_classes, aria: (active ? { current: "step" } : {}) do %>
+          <span class="ship__stepper-marker">
+            <%= image_tag star_image, alt: "", aria: { hidden: true }, class: "ship__stepper-star" %>
+          </span>
+          <span class="ship__stepper-label"><%= s[:label] %></span>
+        <% end %>
+      <% end %>
+    </nav>
+
+    <p class="ship__subtitle">
+      <% case @step %>
+      <% when 0 %>
+        Here's a refresher on what a ship is
+      <% when 1 %>
+        Double-check your project info. Reviewers will use this to evaluate your ship!
+      <% when 2 %>
+        Help reviewers test your project!
+      <% when 3 %>
+        Tell the community what you built and what you learnt!
+      <% end %>
+    </p>
+
+    <div class="ship__body ship__body--step-<%= @step %>">
+      <%= yield %>
+    </div>
+  <% end %>
+</div>

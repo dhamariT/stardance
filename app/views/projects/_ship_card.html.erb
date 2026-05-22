@@ -1,21 +1,23 @@
 <%# Cream-tinted ship-event card. Reused for every ShipEvent post on the
-    project page. The most recent ship gets a "Latest ship" label up top; pass
-    `latest: true` to render it. %>
+    project page, home feed, and profile feed. Pass `ship_number: n` for a
+    sequential label (e.g. "Ship #2"); omit for a generic "Ship" label. %>
 <%
-  ship             = post.postable
-  author           = post.user
-  ship_text        = ship.respond_to?(:description) ? ship.description.to_s : ""
-  ship_attachments = ship.respond_to?(:attachments) ? ship.attachments.to_a.first(1) : []
-  total_hours      = (project.duration_seconds / 3600.0).round
+  ship        = post.postable
+  author      = post.user
+  ship_text   = ship.body.to_s
+  total_hours = (project.duration_seconds / 3600.0).round
+  ship_number      = local_assigns[:ship_number]
+  pending_review   = ship.certification_status == "pending"
 %>
 
 <article class="project-show__latest-ship">
-  <% if local_assigns[:latest] %>
-    <header class="project-show__latest-ship-label">
-      <%= inline_svg_tag "icons/sticker.svg", class: "project-show__latest-ship-icon" %>
-      <span>Latest ship</span>
-    </header>
-  <% end %>
+  <header class="project-show__latest-ship-label">
+    <%= inline_svg_tag "icons/sticker.svg", class: "project-show__latest-ship-icon" %>
+    <span><%= ship_number ? "Ship ##{ship_number}" : "Ship" %></span>
+    <% if pending_review %>
+      <span class="project-show__latest-ship-status project-show__latest-ship-status--pending">Pending review</span>
+    <% end %>
+  </header>
 
   <div class="project-show__latest-ship-body">
     <% if author %>
@@ -53,16 +55,6 @@
           <span><%= total_hours %>h</span>
         </li>
       </ul>
-
-      <% if ship_attachments.any? %>
-        <div class="project-show__latest-ship-media">
-          <% ship_attachments.each do |att| %>
-            <% if att.content_type.to_s.start_with?("image/") %>
-              <%= image_tag att, alt: "", class: "project-show__latest-ship-image" %>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
 
       <% if project.demo_url.present? || project.repo_url.present? %>
         <div class="project-show__latest-ship-cta">

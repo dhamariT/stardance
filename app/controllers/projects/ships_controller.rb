@@ -1,20 +1,38 @@
 class Projects::ShipsController < ApplicationController
   before_action :set_project
+  before_action :setup_chrome,    only: [ :new, :info, :review_step, :compose, :create ]
+  before_action :require_shippable, only: [ :review_step, :compose ]
 
+  # Step 0 — "what is a ship" refresher (video only). Entry point.
   def new
     authorize @project, :ship?
-    @hide_sidebar = true
-    @body_class = "ship-page"
-    @step = params[:step]&.to_i&.clamp(1, 3) || 1
-    @step = 1 if @step > 1 && !@project.shippable?
-    load_step_data
+    @step = 0
+  end
+
+  # Step 1 — project info form. Available regardless of shippable? state,
+  # since this is the screen where you fix unmet requirements.
+  def info
+    authorize @project, :ship?
+    @step = 1
+    @project_times = current_user.try_sync_hackatime_data!&.dig(:projects) || {}
+  end
+
+  # Step 2 — review instructions form. Requires the project to be shippable
+  # (handled by the before_action).
+  def review_step
+    authorize @project, :ship?
+    @step = 2
+  end
+
+  # Step 3 — ship composer. Same shippable gate as step 2.
+  def compose
+    authorize @project, :ship?
+    @step = 3
+    @last_ship = @project.last_ship_event
   end
 
   def create
     # authorize @project, :ship?
-    @hide_sidebar = true
-    @body_class = "ship-page"
-
     wizard = session.delete(:ship_wizard) || {}
     review_instructions = (wizard["review_instructions"].presence || params[:review_instructions]).to_s.strip.presence
     mission_payout_path = wizard["mission_payout_path"].presence || params[:mission_payout_path]
@@ -49,12 +67,20 @@ class Projects::ShipsController < ApplicationController
       @project = Project.find(params[:project_id])
     end
 
-    def load_step_data
-      if @step == 1
-        @project_times = current_user.try_sync_hackatime_data!&.dig(:projects) || {}
-      elsif @step == 3
-        @last_ship = @project.last_ship_event
-      end
+    # Shared chrome state for every wizard step: hide the global sidebar and
+    # apply the ship-page body class so the layout knows we're in the wizard.
+    def setup_chrome
+      @hide_sidebar = true
+      @body_class = "ship-page"
+    end
+
+    # Steps 2 and 3 can only be reached once the project meets every shipping
+    # requirement. If a user lands on those URLs early (typed-in URL, stale
+    # bookmark, mid-flow regression after editing project info), bounce them
+    # back to the info step where they can fix things.
+    def require_shippable
+      return if @project.shippable?
+      redirect_to info_project_ships_path(@project)
     end
 
     def initial_ship?

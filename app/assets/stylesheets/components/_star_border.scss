@@ -1,0 +1,119 @@
+// Decorative border with star-shaped cutouts, applied via `border-image`.
+// Density (compact = single-line strip, tall = square) is resolved by:
+//   1. `.star-border--tall`     — explicit tall (caller passed compact: false)
+//   2. `.star-border--compact`  — explicit compact (caller passed compact: true)
+//   3. `:has(input):not(:has(textarea))` — auto-compact for single-line inputs
+//   4. default                  — tall
+//
+// Slice values per SVG are pinned to the path extents (1px stroke half-width
+// + 0.5px safety) so the bezier reach is fully captured. Compact min-heights
+// equal the source SVG height so the 3px middle strip (left/right edge line)
+// renders at native scale instead of being compressed to 0.
+
+.star-border {
+  --star-border-source: none;
+  --star-border-slice: 0;
+  --star-border-width: 0;
+  --star-border-min-w: 0;
+  --star-border-min-h: 0;
+
+  border-style: solid;
+  border-width: 0;
+  border-color: transparent;
+  border-image-source: var(--star-border-source);
+  border-image-slice: var(--star-border-slice);
+  border-image-width: var(--star-border-width);
+  border-image-repeat: stretch;
+  min-width: var(--star-border-min-w);
+  min-height: var(--star-border-min-h);
+}
+
+// Variant 1: TL + BR anchors
+.star-border--variant-1,
+.star-border--variant-1.star-border--tall {
+  --star-border-source: url("star_border/variant_1_big.svg");
+  --star-border-slice: 24 40 46 18;
+  --star-border-width: 24px 40px 46px 18px;
+  --star-border-min-w: 58px;
+  --star-border-min-h: 70px;
+}
+.star-border--variant-1:has(input:not([type="file"])):not(:has(textarea)),
+.star-border--variant-1.star-border--compact {
+  --star-border-source: url("star_border/variant_1.svg");
+  --star-border-slice: 21 40 21 18;
+  --star-border-width: 21px 40px 21px 18px;
+  --star-border-min-w: 58px;
+  --star-border-min-h: 45px;
+}
+
+// Variant 2: BL + TR anchors
+.star-border--variant-2,
+.star-border--variant-2.star-border--tall {
+  --star-border-source: url("star_border/variant_2_big.svg");
+  --star-border-slice: 41 22 23 16;
+  --star-border-width: 41px 22px 23px 16px;
+  --star-border-min-w: 38px;
+  --star-border-min-h: 64px;
+}
+.star-border--variant-2:has(input:not([type="file"])):not(:has(textarea)),
+.star-border--variant-2.star-border--compact {
+  --star-border-source: url("star_border/variant_2.svg");
+  --star-border-slice: 21 22 21 16;
+  --star-border-width: 21px 22px 21px 16px;
+  --star-border-min-w: 38px;
+  --star-border-min-h: 45px;
+}
+
+// Variant 3
+.star-border--variant-3,
+.star-border--variant-3.star-border--tall {
+  --star-border-source: url("star_border/variant_3_big.svg");
+  --star-border-slice: 28 41 26 24;
+  --star-border-width: 28px 41px 26px 24px;
+  --star-border-min-w: 65px;
+  --star-border-min-h: 54px;
+}
+.star-border--variant-3:has(input:not([type="file"])):not(:has(textarea)),
+.star-border--variant-3.star-border--compact {
+  --star-border-source: url("star_border/variant_3.svg");
+  --star-border-slice: 22 41 22 24;
+  --star-border-width: 22px 41px 22px 24px;
+  --star-border-min-w: 65px;
+  --star-border-min-h: 47px;
+}
+
+// Variant 4
+.star-border--variant-4,
+.star-border--variant-4.star-border--tall {
+  --star-border-source: url("star_border/variant_4_big.svg");
+  --star-border-slice: 19 28 44 24;
+  --star-border-width: 19px 28px 44px 24px;
+  --star-border-min-w: 52px;
+  --star-border-min-h: 63px;
+}
+.star-border--variant-4:has(input:not([type="file"])):not(:has(textarea)),
+.star-border--variant-4.star-border--compact {
+  --star-border-source: url("star_border/variant_4.svg");
+  --star-border-slice: 22 28 22 25;
+  --star-border-width: 22px 28px 22px 25px;
+  --star-border-min-w: 53px;
+  --star-border-min-h: 47px;
+}
+
+// Variant 5
+.star-border--variant-5,
+.star-border--variant-5.star-border--tall {
+  --star-border-source: url("star_border/variant_5_big.svg");
+  --star-border-slice: 31 52 25 15;
+  --star-border-width: 31px 52px 25px 15px;
+  --star-border-min-w: 67px;
+  --star-border-min-h: 56px;
+}
+.star-border--variant-5:has(input:not([type="file"])):not(:has(textarea)),
+.star-border--variant-5.star-border--compact {
+  --star-border-source: url("star_border/variant_5.svg");
+  --star-border-slice: 22 52 22 15;
+  --star-border-width: 22px 52px 22px 15px;
+  --star-border-min-w: 67px;
+  --star-border-min-h: 47px;
+}

@@ -9,12 +9,14 @@
   <div class="ship__field">
     <label class="ship__label" for="review_instructions">Special instructions</label>
     <p class="ship__hint">Include setup steps, test accounts, environment requirements, or anything they should know. Max 2,000 characters.</p>
-    <%= form.text_area :review_instructions,
-          id: "review_instructions",
-          class: "ship__input ship__input--textarea",
-          rows: 6,
-          maxlength: 2000,
-          placeholder: "Example: Run 'npm install && npm start' to launch locally. Test the multiplayer mode by opening two browser tabs." %>
+    <%= render StarBorderComponent.new(seed: "ship-review-instructions") do %>
+      <%= form.text_area :review_instructions,
+            id: "review_instructions",
+            class: "ship__input ship__input--textarea",
+            rows: 6,
+            maxlength: 2000,
+            placeholder: "Example: Run 'npm install && npm start' to launch locally. Test the multiplayer mode by opening two browser tabs." %>
+    <% end %>
   </div>
 
   <% if Flipper.enabled?(:missions, current_user) %>
@@ -37,7 +39,7 @@
   <% end %>
 
   <div class="ship__actions">
-    <%= link_to "← Back", new_project_ships_path(@project, step: 1), class: "ship__back-link" %>
+    <%= link_to "← Back", info_project_ships_path(@project), class: "ship__back-link" %>
     <%= render SpecialActionButtonComponent.new(
           text: "Save and continue",
           type: :submit,

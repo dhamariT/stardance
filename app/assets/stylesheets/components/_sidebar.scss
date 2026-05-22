@@ -236,6 +236,25 @@ button.sidebar__nav-link {
   border-left: 0;
 }
 
+// Top-positioned variant: popover sits above the trigger, arrow points down.
+.locked-tab-popover--top {
+  transform: translateY(4px);
+
+  &.locked-tab-popover--visible {
+    transform: translateY(0);
+  }
+
+  &::before {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--color-space-bg-2);
+    border-bottom: 0;
+    border-right-color: transparent;
+  }
+}
+
 .sidebar__nav-link {
   transition: font-size 0.15s ease;
 }

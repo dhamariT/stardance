@@ -79,7 +79,7 @@
       <%= render SidebarComponent.new(user: current_user, active_slug_override: @active_nav_slug) %>
       <%= render CommandPaletteComponent.new(current_user: current_user) %>
     <% end %>
-    <%= render "shared/flash" %>
+    <div id="flash-region"><%= render "shared/flash" %></div>
     <%= render Onboarding::GuestBannerComponent.new %>
     <% if tutorial_messages.present? %>
       <%= render DialogueBoxComponent.new(text: tutorial_messages) %>

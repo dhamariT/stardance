@@ -43,6 +43,9 @@ application.register("devlog-time-chart", DevlogTimeChartController);
 import DialogueIterationController from "./dialogue_iteration_controller";
 application.register("dialogue-iteration", DialogueIterationController);
 
+import DisabledTooltipController from "./disabled_tooltip_controller";
+application.register("disabled-tooltip", DisabledTooltipController);
+
 import DropdownController from "./dropdown_controller";
 application.register("dropdown", DropdownController);
 
@@ -54,6 +57,9 @@ application.register("faq-accordion", FaqAccordionController);
 
 import FileUploadController from "./file_upload_controller";
 application.register("file-upload", FileUploadController);
+
+import StarImageInputController from "./star_image_input_controller";
+application.register("star-image-input", StarImageInputController);
 
 import FlashController from "./flash_controller";
 application.register("flash", FlashController);

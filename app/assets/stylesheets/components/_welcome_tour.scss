@@ -158,6 +158,21 @@
   &__next {
     background: var(--color-brand-highlight);
     color: var(--color-set-1-bg);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  // clickToAdvance steps lock the user to a specific action: drop the
+  // overlay's click capture so the highlighted target stays interactive,
+  // and hide the now-empty actions row (both buttons are hidden in this mode).
+  &--click-to-advance &__overlay {
+    pointer-events: none;
+  }
+
+  &--click-to-advance &__actions {
+    display: none;
   }
 
   &__counter {

@@ -9,7 +9,7 @@ class Projects::Ships::ReviewsController < ApplicationController
       "mission_payout_path" => params[:mission_payout_path].to_s.strip.presence
     }
 
-    redirect_to new_project_ships_path(@project, step: 3)
+    redirect_to compose_project_ships_path(@project)
   end
 
   private
