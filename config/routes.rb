@@ -440,6 +440,15 @@ class HelperConstraint
   end
 end
 
+class ReviewerConstraint
+  def self.matches?(request)
+    u = User.find_by(id: request.session[:user_id])
+    u ||= User.find_by(id: ENV["DEV_ADMIN_USER_ID"]) if Rails.env.development?
+    return false unless u
+    u.can_review?
+  end
+end
+
 Rails.application.routes.draw do
   # Sitemap
   get "sitemap.xml", to: "sitemaps#index", as: :sitemap, defaults: { format: :xml }
@@ -576,6 +585,17 @@ Rails.application.routes.draw do
     end
     resources :shop_orders, only: [ :index, :show ]
     resources :support_vibes, only: [ :index ]
+  end
+
+  namespace :reviewer, constraints: ReviewerConstraint do
+    resources :ships, only: [ :index, :show, :update ] do
+      collection do
+        get :next
+      end
+      member do
+        post :claim
+      end
+    end
   end
 
   # admin shallow routing

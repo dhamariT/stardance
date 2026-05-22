@@ -51,9 +51,18 @@ module User::StateFlags
       values = public_send(column) || []
       return if values.include?(value)
 
-      updated = self.class.where(id: id)
-        .where.not("#{column} @> ARRAY[?]::varchar[]", value)
-        .update_all([ "#{column} = array_append(#{column}, ?), updated_at = NOW()", value ])
+      updated = case column.to_sym
+      when :tutorial_steps_completed
+        self.class.where(id: id)
+          .where.not("tutorial_steps_completed @> ARRAY[?]::varchar[]", value)
+          .update_all([ "tutorial_steps_completed = array_append(tutorial_steps_completed, ?), updated_at = NOW()", value ])
+      when :things_dismissed
+        self.class.where(id: id)
+          .where.not("things_dismissed @> ARRAY[?]::varchar[]", value)
+          .update_all([ "things_dismissed = array_append(things_dismissed, ?), updated_at = NOW()", value ])
+      else
+        raise ArgumentError, "unknown array column #{column.inspect}"
+      end
       return false if updated.zero?
 
       public_send("#{column}=", values + [ value ])
@@ -64,8 +73,16 @@ module User::StateFlags
       values = public_send(column) || []
       return unless values.include?(value)
 
-      self.class.where(id: id)
-        .update_all([ "#{column} = array_remove(#{column}, ?), updated_at = NOW()", value ])
+      case column.to_sym
+      when :tutorial_steps_completed
+        self.class.where(id: id)
+          .update_all([ "tutorial_steps_completed = array_remove(tutorial_steps_completed, ?), updated_at = NOW()", value ])
+      when :things_dismissed
+        self.class.where(id: id)
+          .update_all([ "things_dismissed = array_remove(things_dismissed, ?), updated_at = NOW()", value ])
+      else
+        raise ArgumentError, "unknown array column #{column.inspect}"
+      end
       public_send("#{column}=", values - [ value ])
       true
     end

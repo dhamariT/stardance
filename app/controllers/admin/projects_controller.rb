@@ -77,6 +77,7 @@ class Admin::ProjectsController < Admin::ApplicationController
     end
 
     @project.update_column(:ship_status, new_status)
+    sync_last_ship_event_certification(new_status)
 
     PaperTrail::Version.create!(
       item: @project,
@@ -86,6 +87,19 @@ class Admin::ProjectsController < Admin::ApplicationController
     )
 
     redirect_to admin_project_path(@project), notice: "Ship status changed from #{old_status} to #{new_status}."
+  end
+
+  def sync_last_ship_event_certification(new_status)
+    ship_event = @project.last_ship_event
+    return unless ship_event
+
+    new_cert = case new_status
+    when "approved" then "approved"
+    when "rejected" then "rejected"
+    else "pending"
+    end
+    return if ship_event.certification_status == new_cert
+    ship_event.update!(certification_status: new_cert)
   end
 
   def force_state

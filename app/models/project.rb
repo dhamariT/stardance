@@ -86,6 +86,7 @@ class Project < ApplicationRecord
   has_many :git_commit_posts, -> { where(postable_type: "Post::GitCommit").order(created_at: :desc) }, class_name: "Post"
   has_many :votes, dependent: :destroy
   has_many :reports, class_name: "Project::Report", dependent: :destroy
+  has_many :ship_reviews, dependent: :restrict_with_exception
   has_many :skips, class_name: "Project::Skip", dependent: :destroy
   has_many :project_follows, dependent: :destroy
   has_many :followers, through: :project_follows, source: :user
@@ -229,13 +230,15 @@ class Project < ApplicationRecord
     state :draft, initial: true
     state :submitted
     state :under_review
+    state :needs_changes
     state :approved
     state :rejected
 
     event :submit_for_review do
-      transitions from: [ :draft, :submitted, :under_review, :approved, :rejected ], to: :submitted, guard: :shippable?
+      transitions from: [ :draft, :submitted, :under_review, :needs_changes, :approved, :rejected ], to: :submitted, guard: :shippable?
       after do
         self.shipped_at = Time.current
+        ship_reviews.find_or_create_by!(status: :pending)
       end
     end
 
@@ -249,6 +252,10 @@ class Project < ApplicationRecord
 
     event :reject do
       transitions from: :under_review, to: :rejected
+    end
+
+    event :return_for_changes do
+      transitions from: :under_review, to: :needs_changes
     end
   end
 

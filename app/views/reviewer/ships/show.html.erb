@@ -1,0 +1,44 @@
+<% content_for :title, "Review: #{@ship_review.project.title}" %>
+
+<div class="reviewer-show">
+  <header class="reviewer-show__header">
+    <h1><%= @ship_review.project.title %></h1>
+    <p>
+      Submitted <%= time_ago_in_words(@ship_review.project.shipped_at || @ship_review.created_at) %> ago
+      &middot;
+      <%= link_to "View project", project_path(@ship_review.project), target: "_blank", rel: "noopener" %>
+    </p>
+  </header>
+
+  <section class="reviewer-show__project">
+    <% if @ship_review.project.description.present? %>
+      <h2>Description</h2>
+      <p><%= @ship_review.project.description %></p>
+    <% end %>
+
+    <dl class="reviewer-show__links">
+      <% if @ship_review.project.repo_url.present? %>
+        <dt>Repo</dt>
+        <dd><%= link_to @ship_review.project.repo_url, @ship_review.project.repo_url, target: "_blank", rel: "noopener" %></dd>
+      <% end %>
+      <% if @ship_review.project.demo_url.present? %>
+        <dt>Demo</dt>
+        <dd><%= link_to @ship_review.project.demo_url, @ship_review.project.demo_url, target: "_blank", rel: "noopener" %></dd>
+      <% end %>
+      <% if @ship_review.project.readme_url.present? %>
+        <dt>README</dt>
+        <dd><%= link_to @ship_review.project.readme_url, @ship_review.project.readme_url, target: "_blank", rel: "noopener" %></dd>
+      <% end %>
+    </dl>
+  </section>
+
+  <% if @ship_review.reviewer_id == current_user.id && !@ship_review.claim_expired? %>
+    <%= render "review_form", ship_review: @ship_review %>
+  <% else %>
+    <div class="reviewer-show__claim">
+      <p>You don't currently hold the claim on this review.</p>
+      <%= button_to "Claim this review", claim_reviewer_ship_path(@ship_review), method: :post, class: "btn btn-primary" %>
+      <%= link_to "Back to queue", reviewer_ships_path, class: "btn btn-tertiary" %>
+    </div>
+  <% end %>
+</div>

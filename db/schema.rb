@@ -636,6 +636,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_100000) do
     t.index ["confirmation_token"], name: "index_rsvps_on_confirmation_token", unique: true
   end
 
+  create_table "ship_reviews", force: :cascade do |t|
+    t.datetime "claim_expires_at"
+    t.datetime "claimed_at"
+    t.datetime "created_at", null: false
+    t.datetime "decided_at"
+    t.text "feedback"
+    t.text "internal_reason"
+    t.integer "lock_version", default: 0, null: false
+    t.bigint "project_id", null: false
+    t.bigint "reviewer_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["decided_at"], name: "index_ship_reviews_on_decided_at"
+    t.index ["project_id"], name: "index_ship_reviews_unique_pending_project", unique: true, where: "(status = 0)"
+    t.index ["reviewer_id"], name: "index_ship_reviews_on_reviewer_id"
+    t.index ["status", "claim_expires_at"], name: "index_ship_reviews_on_status_and_claim_expires_at"
+  end
+
   create_table "shop_card_grants", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "expected_amount_cents"
@@ -1046,6 +1064,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_19_100000) do
   add_foreign_key "report_review_tokens", "project_reports", column: "report_id"
   add_foreign_key "rsvp_games", "rsvps"
   add_foreign_key "rsvp_replies", "rsvps"
+  add_foreign_key "ship_reviews", "projects"
+  add_foreign_key "ship_reviews", "users", column: "reviewer_id"
   add_foreign_key "shop_card_grants", "shop_items"
   add_foreign_key "shop_card_grants", "users"
   add_foreign_key "shop_items", "users"
