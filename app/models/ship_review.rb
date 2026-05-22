@@ -57,11 +57,16 @@ class ShipReview < ApplicationRecord
     ).merge(for_reviewer(user))
   }
 
+  before_save :set_decided_at, if: :status_changed?
   after_save :sync_project_state!, if: :saved_change_to_status?
   after_save_commit :notify_owner!, if: -> { saved_change_to_status? && !pending? }
 
   private
-
+  
+  def set_decided_at
+    self.decided_at = Time.current if !pending? && decided_at.nil?
+  end
+  
   def sync_project_state!
     return if pending?
     project.with_lock do
