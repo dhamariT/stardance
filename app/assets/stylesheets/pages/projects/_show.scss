@@ -1269,6 +1269,7 @@ turbo-frame#project_hero {
   left: 50%;
   translate: -50% 0;
   margin: 0;
+  max-height: 76vh;
   overflow: visible;
 
   &::backdrop {
@@ -1278,6 +1279,45 @@ turbo-frame#project_hero {
 
   .feed-composer {
     background: var(--color-space-bg-2, #0d0b2e);
+    display: flex;
+    flex-direction: column;
+    max-height: 76vh;
+  }
+
+  .feed-composer__chips,
+  .feed-composer__grid,
+  .feed-composer__info-wrap,
+  .feed-composer__toolbar {
+    flex-shrink: 0;
+  }
+
+  .feed-composer__form {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .feed-composer__scroll {
+    display: contents;
+  }
+
+  .feed-composer__main {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .feed-composer__field {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+
+  .feed-composer__textarea {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
 

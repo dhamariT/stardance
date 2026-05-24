@@ -13,7 +13,8 @@
         <%= f.text_area :body,
               placeholder: "Write a comment...",
               class: "comment-form__input",
-              rows: 2 %>
+              rows: 2,
+              maxlength: Comment::BODY_MAX_LENGTH %>
 
         <div class="comment-form__actions">
           <%= render ActionButtonComponent.new(
