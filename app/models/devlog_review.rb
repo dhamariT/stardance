@@ -50,9 +50,9 @@ class DevlogReview < ApplicationRecord
     if: :rejected?
 
   # State transition methods
-  def approve!(minutes, justification_text = nil)
-    raise "Cannot approve - already reviewed" if approved? || rejected?
+  def approve!(minutes, justification_text)
     raise "Approved minutes must be positive" if minutes.to_i <= 0
+    raise "Justification required please!!!" if justification_text.blank?
 
     update!(
       status: "approved",
@@ -62,8 +62,7 @@ class DevlogReview < ApplicationRecord
   end
 
   def reject!(justification_text)
-    raise "Cannot reject - already reviewed" if approved? || rejected?
-    raise "Justification required for rejection" if justification_text.blank?
+    raise "Justification required :pretty please:" if justification_text.blank?
 
     update!(
       status: "rejected",
