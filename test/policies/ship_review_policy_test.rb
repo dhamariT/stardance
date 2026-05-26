@@ -6,6 +6,7 @@ class ShipReviewPolicyTest < Minitest::Test
   end
 
   ReviewStub = Struct.new(:reviewer_id) do
+    def claim_held_by?(user) = reviewer_id == user.id
   end
 
   def test_index_allowed_for_reviewer
@@ -96,5 +97,17 @@ class ShipReviewPolicyMembershipTest < ActiveSupport::TestCase
     other_review = ShipReview.create!(project: other_project, status: :pending)
     visible = ShipReviewPolicy::Scope.new(@member, ShipReview).resolve
     assert_includes visible, other_review
+  end
+
+  test "blocks update when claim has expired" do
+    review = ShipReview.create!(project: projects(:two), status: :pending,
+                                reviewer: @member, claim_expires_at: 1.minute.ago)
+    refute ShipReviewPolicy.new(@member, review).update?
+  end
+
+  test "allows update when claim is held by the reviewer" do
+    review = ShipReview.create!(project: projects(:two), status: :pending,
+                                reviewer: @member, claim_expires_at: 5.minutes.from_now)
+    assert ShipReviewPolicy.new(@member, review).update?
   end
 end

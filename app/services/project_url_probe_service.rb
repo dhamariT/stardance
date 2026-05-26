@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+# Reachability probe used by Projects::ShipsController on re-ship to decide
+# whether to auto-approve the ship. Delegates the actual HTTP work to
+# Project#url_reachable? so the SafeUrl guard, HEAD request, redirect handling,
+# and 5-minute cache are shared with the shipping_requirements check.
 class ProjectUrlProbeService
-  TIMEOUT = 5
-  USER_AGENT = "Stardance-Ship-Probe/1.0"
-
   Result = Data.define(:ok, :failures) do
     def ok? = ok
   end
@@ -23,13 +24,6 @@ class ProjectUrlProbeService
 
   def probe(url)
     return false if url.blank?
-    return false unless SafeUrl.safe_to_probe?(url)
-    response = Faraday.new(url: url, headers: { "User-Agent" => USER_AGENT }) do |conn|
-      conn.options.timeout = TIMEOUT
-      conn.options.open_timeout = TIMEOUT
-    end.get
-    response.status.between?(200, 399)
-  rescue StandardError
-    false
+    @project.url_reachable?(url)
   end
 end

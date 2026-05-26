@@ -50,12 +50,9 @@ class ShipReview < ApplicationRecord
       .where.not(project_id: user.memberships.select(:project_id))
   }
 
-  scope :available_for, ->(user) {
-    where(status: statuses[:pending]).where(
-      "(reviewer_id IS NULL OR claim_expires_at IS NULL OR claim_expires_at < ?) OR reviewer_id = ?",
-      Time.current, user.id
-    ).merge(for_reviewer(user))
-  }
+  def self.available_for(user)
+    super.merge(for_reviewer(user))
+  end
 
   before_save :stamp_claimed_at, if: -> { will_save_change_to_reviewer_id? && reviewer_id.present? && claimed_at.nil? }
   before_save :stamp_decided_at, if: -> { will_save_change_to_status? && status_change&.last != "pending" && decided_at.nil? }

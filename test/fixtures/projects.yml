@@ -39,13 +39,7 @@
 one:
   title: MyString
   description: MyText
-  repo_url: https://github.com/example/one
-  demo_url: https://example.com/one
-  readme_url: https://raw.githubusercontent.com/example/one/main/README.md
 
 two:
   title: MyString
   description: MyText
-  repo_url: https://github.com/example/two
-  demo_url: https://example.com/two
-  readme_url: https://raw.githubusercontent.com/example/two/main/README.md

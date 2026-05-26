@@ -3,16 +3,14 @@ module Reviewable
 
   CLAIM_TTL = 5.minutes
 
-  included do
-    scope :available_for, ->(user) {
+  class_methods do
+    def available_for(user)
       where(status: statuses[:pending]).where(
         "(reviewer_id IS NULL OR claim_expires_at IS NULL OR claim_expires_at < ?) OR reviewer_id = ?",
         Time.current, user.id
       )
-    }
-  end
+    end
 
-  class_methods do
     def atomic_claim!(record_id, user)
       now = Time.current
       expires = now + CLAIM_TTL
