@@ -26,7 +26,7 @@
 #
 class Rsvp < ApplicationRecord
   AMBASSADOR_REFERRAL_PREFIX = "a-".freeze
-  USER_REF_OPTIONS = %w[Teacher NASA GitHub AMD HackClub Friend].freeze
+  USER_REF_OPTIONS = %w[Teacher NASA GitHub AMD Google Instagram HackClub Friend].freeze
 
   has_paper_trail ignore: [ :ip_address, :user_agent ]
   has_secure_token :confirmation_token
