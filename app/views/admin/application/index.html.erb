@@ -7,19 +7,18 @@
     <%= link_to "Users", "/admin/users", class: "btn-primary" %>
   <% end %>
 
-  <% button_class = Flipper.enabled?(:admin_dark_brown_buttons, current_user) ? "btn-primary-dark" : "btn-primary" %>
   <% if policy(:admin).manage_projects? %>
     <%= link_to "Projects", admin_projects_path, class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).manage_shop? %>
-    <%= link_to "Manage shop", admin_manage_shop_path, class: button_class %>
+    <%= link_to "Manage shop", admin_manage_shop_path, class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_audit_logs? %>
-    <%= link_to "Audit Logs", admin_audit_logs_path, class: button_class %>
+    <%= link_to "Audit Logs", admin_audit_logs_path, class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_reports? %>
     <% pending_reports = Project::Report.pending.where.not(reason: "demo_broken").size %>
-    <%= link_to "/admin/reports?status=pending", class: button_class do %>
+    <%= link_to "/admin/reports?status=pending", class: "btn-primary" do %>
       Reports
       <% if pending_reports > 0 %>
         <span style="background-color: #ef4444; color: white; border-radius: 9999px; padding: 0px 6px; font-size: 0.9em; min-width: 20px; text-align: center;">
@@ -76,40 +75,39 @@
 
 <h2>dashboards</h2>
 <div class="button-grid">
-  <% button_class = Flipper.enabled?(:admin_dark_brown_buttons, current_user) ? "btn-primary-dark" : "btn-primary" %>
   <% if policy(:admin).access_blazer? %>
-    <%= link_to "Blazer", "/admin/blazer", class: button_class %>
+    <%= link_to "Blazer", "/admin/blazer", class: "btn-primary" %>
   <% end %>
 
   <% if policy(:admin).access_flipper? %>
-    <%= link_to "Flipper", "/admin/flipper", class: button_class %>
+    <%= link_to "Flipper", "/admin/flipper", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).manage_user_roles? %>
-  <%= link_to "Manage users w/ perms", "/admin/user-perms", class: button_class %>
+  <%= link_to "Manage users w/ perms", "/admin/user-perms", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_jobs? %>
-  <%= link_to "Job queue", "/admin/jobs", class: button_class %>
+  <%= link_to "Job queue", "/admin/jobs", class: "btn-primary" %>
   <% end %>
     <% if policy(:admin).access_super_mega_dashboard? %>
-    <%= link_to "Super Mega Dashboard", "/admin/super_mega_dashboard", class: "#{button_class} super-mega-dashboard-btn" %>
+    <%= link_to "Super Mega Dashboard", "/admin/super_mega_dashboard", class: "btn-primary super-mega-dashboard-btn" %>
   <% end %>
     <% if policy(:admin).access_payouts_dashboard? %>
-    <%= link_to "Payouts Dashboard", "/admin/payouts_dashboard", class: button_class %>
+    <%= link_to "Payouts Dashboard", "/admin/payouts_dashboard", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_fraud_dashboard? %>
-    <%= link_to "Fraud Dashboard", "/admin/fraud_dashboard", class: button_class %>
+    <%= link_to "Fraud Dashboard", "/admin/fraud_dashboard", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_admin_endpoints? %>
-    <%= link_to "Ship Event Scores", "/admin/ship_event_scores", class: button_class %>
+    <%= link_to "Ship Event Scores", "/admin/ship_event_scores", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_fulfillment_dashboard? %>
-    <%= link_to "Fulfillment Dashboard", admin_fulfillment_dashboard_index_path, class: button_class %>
+    <%= link_to "Fulfillment Dashboard", admin_fulfillment_dashboard_index_path, class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_voting_dashboard? %>
-    <%= link_to "Voting Dashboard", "/admin/voting_dashboard", class: button_class %>
+    <%= link_to "Voting Dashboard", "/admin/voting_dashboard", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_vote_spam_dashboard? %>
-    <%= link_to "Vote Spam Dashboard", admin_vote_spam_dashboard_path, class: button_class %>
+    <%= link_to "Vote Spam Dashboard", admin_vote_spam_dashboard_path, class: "btn-primary" %>
   <% end %>
   <%= link_to "Help bot", "slack://app?team=T0266FRGM&id=A09NP19R7FX&tab=home", class: "btn-primary" %>
   <%= link_to "Ship Cert & Guardians of Integrity Dashboards", "https://review.hackclub.com/", class: "btn-primary", target: "_blank" %>
@@ -117,23 +115,22 @@
 
 <h2>other stuff</h2>
 <div class="button-grid">
-  <% button_class = Flipper.enabled?(:admin_dark_brown_buttons, current_user) ? "btn-primary-dark" : "btn-primary" %>
   <% if policy(:admin).access_shop_suggestions? %>
-    <%= link_to "Shop suggestions", "/admin/shop_suggestions", class: button_class %>
+    <%= link_to "Shop suggestions", "/admin/shop_suggestions", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_suspicious_votes? %>
-    <%= link_to "Suspicious Votes", "/admin/suspicious_votes", class: button_class %>
+    <%= link_to "Suspicious Votes", "/admin/suspicious_votes", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).manage_messages? %>
-    <%= link_to "Messages", admin_messages_path, class: button_class %>
+    <%= link_to "Messages", admin_messages_path, class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_support_vibes? %>
-    <%= link_to "Support Vibes", "/admin/support_vibes", class: button_class %>
+    <%= link_to "Support Vibes", "/admin/support_vibes", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_special_activities? %>
-    <%= link_to "Special Activities", "/admin/special_activities", class: button_class %>
+    <%= link_to "Special Activities", "/admin/special_activities", class: "btn-primary" %>
   <% end %>
   <% if policy(:admin).access_flavortime_dashboard? %>
-    <%= link_to "Flavortime Dashboard", admin_flavortime_dashboard_path, class: button_class %>
+    <%= link_to "Flavortime Dashboard", admin_flavortime_dashboard_path, class: "btn-primary" %>
   <% end %>
 </div>
