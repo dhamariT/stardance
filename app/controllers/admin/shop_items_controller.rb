@@ -11,10 +11,10 @@ module Admin
 
     def new
       authorize :admin, shop_manager? ? :manage_draft_shop_items? : :manage_shop?
-      if params[:type].present? && available_shop_item_types.include?(params[:type])
-        @shop_item = params[:type].constantize.new
+      @shop_item = if params[:type].present? && available_shop_item_types.include?(params[:type])
+        available_shop_item_types.find { |t| t == params[:type] }.constantize.new
       else
-        @shop_item = ShopItem.new
+        ShopItem.new
       end
       if shop_manager?
         @shop_item.draft = true
