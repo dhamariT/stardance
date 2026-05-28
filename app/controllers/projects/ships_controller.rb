@@ -157,56 +157,13 @@ class Projects::ShipsController < ApplicationController
 
     def maybe_create_ysws_review(ship_event)
       # Only create review if this is NOT the first ship (i.e., there are previous approved ships)
-      # Exclude the current ship_event from the check
-      return unless has_previous_approved_ships?(excluding_ship_event: ship_event)
+      return unless has_previous_approved_ships?(excluding_ship_event: ship_event) # excl: as ship event created before
 
-      # Calculate hours worked between ships and convert to minutes
-      hours_worked = ship_event.hours || 0
-      original_minutes = (hours_worked * 60).to_i
-
-      # Wrap in transaction to ensure YSWS review and devlog reviews are created atomically
-      ActiveRecord::Base.transaction do
-        # Create the YSWS review
-        ysws_review = Certification::Ysws.create!(
-          user: current_user,
-          project: @project,
-          post_ship_event: ship_event,
-          ship_cert_id: nil, # Will be set later when this ship is certified
-          original_minutes: original_minutes,
-          approved_minutes: nil, # Will be set by reviewer
-          reviewed_at: nil, # Will be set when reviewed
-          reviewer_id: nil # Will be assigned by admin
-        )
-
-        # Find the time range for devlogs (same logic as ship_event.hours)
-        ship_event_post = ship_event.post
-        previous_ship_event_post = @project.posts.of_ship_events
-                                          .where("posts.created_at < ?", ship_event_post.created_at)
-                                          .order("posts.created_at DESC")
-                                          .first
-        start_time = previous_ship_event_post ? previous_ship_event_post.created_at : @project.created_at
-
-        # Get all devlogs in the time range (excluding deleted ones)
-        devlog_posts = @project.posts.of_devlogs(join: true)
-                               .where("posts.created_at >= ? AND posts.created_at <= ?", start_time, ship_event_post.created_at)
-                               .where(post_devlogs: { deleted_at: nil })
-                               .order("posts.created_at ASC")
-
-        # Create a Certification::Devlog review for each devlog
-        devlog_posts.each do |post|
-          devlog = post.postable
-          devlog_minutes = (devlog.duration_seconds || 0) / 60
-
-          Certification::Devlog.create!(
-            post_devlog: devlog,
-            ysws_review: ysws_review,
-            original_minutes: devlog_minutes,
-            approved_minutes: nil, # Will be set by reviewer
-            justification: nil, # Will be set by reviewer
-            status: :pending
-          )
-        end
-      end
+      Certification::YswsReviewCreator.new(
+        ship_event: ship_event,
+        user: current_user,
+        project: @project
+      ).call
     end
 
     def has_previous_approved_ships?(excluding_ship_event: nil) # this could be scoped. note that post:ship_event is source of truth for ship events, as ship certifications aren't made for each ship event
