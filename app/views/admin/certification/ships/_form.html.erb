@@ -1,4 +1,4 @@
-<%= form_with model: ship, url: certification_ship_path(ship), method: :patch, class: "review-form" do |f| %>
+<%= form_with model: ship, url: admin_certification_ship_path(ship), method: :patch, class: "review-form" do |f| %>
   <% if ship.errors.any? %>
     <div class="review-form__errors">
       <ul>
@@ -33,7 +33,7 @@
 
   <div class="review-form__actions">
     <%= f.submit "Submit verdict", class: "btn btn-primary" %>
-    <%= link_to "Skip and get next", next_certification_ships_path(skip: ship.id), class: "btn btn-secondary" %>
-    <%= link_to "Back to queue", certification_ships_path, class: "btn btn-tertiary" %>
+    <%= link_to "Skip and get next", next_admin_certification_ships_path(skip: ship.id), class: "btn btn-secondary" %>
+    <%= link_to "Back to queue", admin_certification_ships_path, class: "btn btn-tertiary" %>
   </div>
 <% end %>

@@ -1,8 +1,8 @@
-class Certification::DevlogReviewsController < Admin::ApplicationController
+class Admin::Certification::DevlogReviewsController < Admin::Certification::ApplicationController
   def update
-    authorize :admin, :access_ysws_review?
+    authorize [ :certification, :ysws ], :update?
 
-    devlog_review = Certification::Devlog.find(params[:id])
+    devlog_review = ::Certification::Devlog.find(params[:id])
 
     if devlog_review.update(devlog_review_params)
       render json: {

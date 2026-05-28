@@ -65,26 +65,28 @@
 #                               admin_blazer        /admin/blazer                                                                                     Blazer::Engine
 #                                                   /admin/flipper                                                                                    Flipper::UI
 #                 admin_mission_control_jobs        /admin/jobs                                                                                       MissionControl::Jobs::Engine
-#                    promote_role_admin_user POST   /admin/users/:id/promote_role(.:format)                                                           admin/users#promote_role
-#                     demote_role_admin_user POST   /admin/users/:id/demote_role(.:format)                                                            admin/users#demote_role
-#                  toggle_flipper_admin_user POST   /admin/users/:id/toggle_flipper(.:format)                                                         admin/users#toggle_flipper
-#                  sync_hackatime_admin_user POST   /admin/users/:id/sync_hackatime(.:format)                                                         admin/users#sync_hackatime
-#              mass_reject_orders_admin_user POST   /admin/users/:id/mass_reject_orders(.:format)                                                     admin/users#mass_reject_orders
-#                  adjust_balance_admin_user POST   /admin/users/:id/adjust_balance(.:format)                                                         admin/users#adjust_balance
-#                             ban_admin_user POST   /admin/users/:id/ban(.:format)                                                                    admin/users#ban
-#                           unban_admin_user POST   /admin/users/:id/unban(.:format)                                                                  admin/users#unban
-#           cancel_all_hcb_grants_admin_user POST   /admin/users/:id/cancel_all_hcb_grants(.:format)                                                  admin/users#cancel_all_hcb_grants
-#                     impersonate_admin_user POST   /admin/users/:id/impersonate(.:format)                                                            admin/users#impersonate
-#            refresh_verification_admin_user POST   /admin/users/:id/refresh_verification(.:format)                                                   admin/users#refresh_verification
-#              toggle_voting_lock_admin_user POST   /admin/users/:id/toggle_voting_lock(.:format)                                                     admin/users#toggle_voting_lock
-#                           votes_admin_user GET    /admin/users/:id/votes(.:format)                                                                  admin/users#votes
-#                set_vote_balance_admin_user POST   /admin/users/:id/set_vote_balance(.:format)                                                       admin/users#set_vote_balance
-#      set_ysws_eligible_override_admin_user PATCH  /admin/users/:id/set_ysws_eligible_override(.:format)                                             admin/users#set_ysws_eligible_override
-#             stop_impersonating_admin_users POST   /admin/users/stop_impersonating(.:format)                                                         admin/users#stop_impersonating
+#                           admin_user_roles POST   /admin/users/:user_id/roles(.:format)                                                             admin/users/roles#create
+#                            admin_user_role DELETE /admin/users/:user_id/roles/:name(.:format)                                                       admin/users/roles#destroy
+#                             admin_user_ban DELETE /admin/users/:user_id/ban(.:format)                                                               admin/users/bans#destroy
+#                                            POST   /admin/users/:user_id/ban(.:format)                                                               admin/users/bans#create
+#                   admin_user_impersonation POST   /admin/users/:user_id/impersonation(.:format)                                                     admin/users/impersonations#create
+#                   admin_user_feature_flags POST   /admin/users/:user_id/feature_flags(.:format)                                                     admin/users/feature_flags#create
+#                    admin_user_feature_flag DELETE /admin/users/:user_id/feature_flags/:feature(.:format)                                            admin/users/feature_flags#destroy
+#                  admin_user_hackatime_sync POST   /admin/users/:user_id/hackatime_sync(.:format)                                                    admin/users/hackatime_syncs#create
+#                 admin_user_order_rejection POST   /admin/users/:user_id/order_rejection(.:format)                                                   admin/users/order_rejections#create
+#             admin_user_balance_adjustments POST   /admin/users/:user_id/balance_adjustments(.:format)                                               admin/users/balance_adjustments#create
+#              admin_user_grant_cancellation POST   /admin/users/:user_id/grant_cancellation(.:format)                                                admin/users/grant_cancellations#create
+#                    admin_user_verification POST   /admin/users/:user_id/verification(.:format)                                                      admin/users/verifications#create
+#                    admin_user_vote_balance PATCH  /admin/users/:user_id/vote_balance(.:format)                                                      admin/users/vote_balances#update
+#                                            PUT    /admin/users/:user_id/vote_balance(.:format)                                                      admin/users/vote_balances#update
+#                   admin_user_ysws_override PATCH  /admin/users/:user_id/ysws_override(.:format)                                                     admin/users/ysws_overrides#update
+#                                            PUT    /admin/users/:user_id/ysws_override(.:format)                                                     admin/users/ysws_overrides#update
+#                           admin_user_votes GET    /admin/users/:user_id/votes(.:format)                                                             admin/users/votes#index
 #                                admin_users GET    /admin/users(.:format)                                                                            admin/users#index
 #                                 admin_user GET    /admin/users/:id(.:format)                                                                        admin/users#show
 #                                            PATCH  /admin/users/:id(.:format)                                                                        admin/users#update
 #                                            PUT    /admin/users/:id(.:format)                                                                        admin/users#update
+#                        admin_impersonation DELETE /admin/impersonation(.:format)                                                                    admin/users/impersonations#destroy
 #                      restore_admin_project POST   /admin/projects/:id/restore(.:format)                                                             admin/projects#restore
 #                       delete_admin_project POST   /admin/projects/:id/delete(.:format)                                                              admin/projects#delete
 #           update_ship_status_admin_project POST   /admin/projects/:id/update_ship_status(.:format)                                                  admin/projects#update_ship_status
@@ -167,17 +169,17 @@
 #                                            PATCH  /admin/missions/:slug(.:format)                                                                   admin/missions#update
 #                                            PUT    /admin/missions/:slug(.:format)                                                                   admin/missions#update
 #                                            DELETE /admin/missions/:slug(.:format)                                                                   admin/missions#destroy
-#                   next_certification_ships GET    /admin/certification/ship_cert/next(.:format)                                                     certification/ships#next
-#                   claim_certification_ship POST   /admin/certification/ship_cert/:id/claim(.:format)                                                certification/ships#claim
-#                        certification_ships GET    /admin/certification/ship_cert(.:format)                                                          certification/ships#index
-#                         certification_ship GET    /admin/certification/ship_cert/:id(.:format)                                                      certification/ships#show
-#                                            PATCH  /admin/certification/ship_cert/:id(.:format)                                                      certification/ships#update
-#                                            PUT    /admin/certification/ship_cert/:id(.:format)                                                      certification/ships#update
-#                certification_devlog_review PATCH  /admin/certification/devlog_reviews/:id(.:format)                                                 certification/devlog_reviews#update
-#                                            PUT    /admin/certification/devlog_reviews/:id(.:format)                                                 certification/devlog_reviews#update
-#                 certification_ysws_reviews GET    /admin/certification/review(.:format)                                                             certification/ysws#index
-#                  certification_ysws_review GET    /admin/certification/review/:id(.:format)                                                         certification/ysws#show
-#            certification_ysws_report_fraud POST   /admin/certification/review/:id/report_fraud(.:format)                                            certification/ysws#report_fraud
+#             next_admin_certification_ships GET    /admin/certification/ship_cert/next(.:format)                                                     admin/certification/ships#next
+#             claim_admin_certification_ship POST   /admin/certification/ship_cert/:id/claim(.:format)                                                admin/certification/ships#claim
+#                  admin_certification_ships GET    /admin/certification/ship_cert(.:format)                                                          admin/certification/ships#index
+#                   admin_certification_ship GET    /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#show
+#                                            PATCH  /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#update
+#                                            PUT    /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#update
+#          admin_certification_devlog_review PATCH  /admin/certification/devlog_reviews/:id(.:format)                                                 admin/certification/devlog_reviews#update
+#                                            PUT    /admin/certification/devlog_reviews/:id(.:format)                                                 admin/certification/devlog_reviews#update
+#           admin_certification_ysws_reviews GET    /admin/certification/review(.:format)                                                             admin/certification/ysws#index
+#            admin_certification_ysws_review GET    /admin/certification/review/:id(.:format)                                                         admin/certification/ysws#show
+#      admin_certification_ysws_report_fraud POST   /admin/certification/review/:id/report_fraud(.:format)                                            admin/certification/ysws#report_fraud
 #                                      queue GET    /queue(.:format)                                                                                  queue#index
 #                             projects_setup GET    /projects/setup(.:format)                                                                         projects/setup#idea
 #                 projects_setup_submit_idea POST   /projects/setup/idea(.:format)                                                                    projects/setup#submit_idea
@@ -634,23 +636,23 @@ Rails.application.routes.draw do
         post :restore
       end
     end
-  end
 
-  namespace :certification, path: "admin/certification", constraints: AdminConstraint do
-    resources :ships, path: "ship_cert", only: [ :index, :show, :update ] do
-      collection do
-        get :next
+    namespace :certification do
+      resources :ships, path: "ship_cert", only: [ :index, :show, :update ] do
+        collection do
+          get :next
+        end
+        member do
+          post :claim
+        end
       end
-      member do
-        post :claim
-      end
+
+      resources :devlog_reviews, only: [ :update ]
+
+      get "review", to: "ysws#index", as: "ysws_reviews"
+      get "review/:id", to: "ysws#show", as: "ysws_review"
+      post "review/:id/report_fraud", to: "ysws#report_fraud", as: "ysws_report_fraud"
     end
-
-    resources :devlog_reviews, only: [ :update ]
-
-    get "review", to: "ysws#index", as: "ysws_reviews"
-    get "review/:id", to: "ysws#show", as: "ysws_review"
-    post "review/:id/report_fraud", to: "ysws#report_fraud", as: "ysws_report_fraud"
   end
 
   get "queue", to: "queue#index"

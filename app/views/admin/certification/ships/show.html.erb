@@ -37,8 +37,8 @@
   <% else %>
     <div class="reviewer-show__claim">
       <p>You don't currently hold the claim on this review.</p>
-      <%= button_to "Claim this review", claim_certification_ship_path(@ship), method: :post, class: "btn btn-primary" %>
-      <%= link_to "Back to queue", certification_ships_path, class: "btn btn-tertiary" %>
+      <%= button_to "Claim this review", claim_admin_certification_ship_path(@ship), method: :post, class: "btn btn-primary" %>
+      <%= link_to "Back to queue", admin_certification_ships_path, class: "btn btn-tertiary" %>
     </div>
   <% end %>
 </div>
