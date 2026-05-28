@@ -69,7 +69,10 @@ class Projects::ShipsController < ApplicationController
       if !reship
         @project.ship_reviews.create!(status: :pending)
       elsif probe_result.ok?
-        @project.approve! if @project.may_approve?
+        # Reship with passing URLs: move through review, auto-approve, create YSWS review.
+        # approve only transitions from :under_review, so we must start_review first.
+        @project.start_review!
+        @project.approve!
         @post.postable.update!(certification_status: "approved")
         maybe_create_ysws_review(ship_event)
       else
