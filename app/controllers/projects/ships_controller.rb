@@ -63,19 +63,31 @@ class Projects::ShipsController < ApplicationController
       )
       @post = @project.posts.create!(user: current_user, postable: ship_event)
       maybe_create_mission_submission(ship_event, mission_payout_path, submission_guide_ack)
-      maybe_create_ysws_review(ship_event)
+
+      # First Ship: Always create ship certification for manual review    ----------- Ask @AVD if you want to change this! - May need to notify teams of any changes!
+      # Reships: If links alive - approves project, create a 'reship' YSWS review, if links dead - Creates ship cert for manual review
+      if !reship
+        # First ship: create ship certification for manual review
+        @project.ship_reviews.create!(status: :pending)
+      elsif probe_result.ok?
+        # Reship with passing URLs: approve and create YSWS review
+        @project.approve! if @project.may_approve?
+        @post.postable.update!(certification_status: "approved")
+        maybe_create_ysws_review(ship_event)
+      else
+        # Reship with failing URLs: create ship cert for manual review, no YSWS
+        @project.ship_reviews.create!(
+          status: :returned,
+          feedback: "Automated URL check failed: #{probe_result.failures.join('; ')}. Fix and re-ship."
+        )
+      end
     end
 
     if !reship
       redirect_to project_path(@project), notice: "Congratulations! Your project has been submitted for review!"
     elsif probe_result.ok?
-      @post.postable.update!(certification_status: "approved")
       redirect_to project_path(@project), notice: "Ship submitted! Your project is now out for voting."
     else
-      @project.ship_reviews.pending.first&.update!(
-        status: :returned,
-        feedback: "Automated URL check failed: #{probe_result.failures.join('; ')}. Fix and re-ship."
-      )
       redirect_to project_path(@project), notice: "Your project needs changes. We couldn't reach your demo or repo. Fix those and re-ship."
     end
   rescue ActiveRecord::RecordInvalid => e
@@ -149,7 +161,8 @@ class Projects::ShipsController < ApplicationController
 
     def maybe_create_ysws_review(ship_event)
       # Only create review if this is NOT the first ship (i.e., there are previous approved ships)
-      return unless has_previous_approved_ships?
+      # Exclude the current ship_event from the check
+      return unless has_previous_approved_ships?(excluding_ship_event: ship_event)
 
       # Calculate hours worked between ships and convert to minutes
       hours_worked = ship_event.hours || 0
@@ -200,10 +213,19 @@ class Projects::ShipsController < ApplicationController
       end
     end
 
-    def has_previous_approved_ships?
-      @project.posts
-        .joins("INNER JOIN post_ship_events ON posts.postable_id = post_ship_events.id AND posts.postable_type = 'Post::ShipEvent'")
-        .where(post_ship_events: { certification_status: "approved" })
-        .exists?
+    def has_previous_approved_ships?(excluding_ship_event: nil)
+      # Exclude the current ship event if provided (to avoid counting it as a "previous" ship)
+      if excluding_ship_event
+        @project.posts
+          .joins("INNER JOIN post_ship_events ON posts.postable_id = post_ship_events.id AND posts.postable_type = 'Post::ShipEvent'")
+          .where(post_ship_events: { certification_status: "approved" })
+          .where.not(post_ship_events: { id: excluding_ship_event.id })
+          .exists?
+      else
+        @project.posts
+          .joins("INNER JOIN post_ship_events ON posts.postable_id = post_ship_events.id AND posts.postable_type = 'Post::ShipEvent'")
+          .where(post_ship_events: { certification_status: "approved" })
+          .exists?
+      end
     end
 end
