@@ -52,7 +52,7 @@ class Projects::ShipsController < ApplicationController
       flash.now[:warning] = "Your README link doesn't appear to be a raw GitHub URL. We require raw README files (from raw.githubusercontent.com) for proper display and consistency. Please update your README URL."
     end
 
-    reship = had_prior_ship_event?
+    reship = has_previous_approved_ships?
     probe_result = reship ? ProjectUrlProbeService.new(@project).call : nil
 
     @project.with_lock do
@@ -117,10 +117,6 @@ class Projects::ShipsController < ApplicationController
 
     def initial_ship?
       @project.posts.where(postable_type: "Post::ShipEvent").one?
-    end
-
-    def had_prior_ship_event?
-      @project.posts.where(postable_type: "Post::ShipEvent").exists?
     end
 
     def mission_submission_guide_ack_required?
@@ -213,8 +209,7 @@ class Projects::ShipsController < ApplicationController
       end
     end
 
-    def has_previous_approved_ships?(excluding_ship_event: nil)
-      # Exclude the current ship event if provided (to avoid counting it as a "previous" ship)
+    def has_previous_approved_ships?(excluding_ship_event: nil) # this could be scoped. note that post:ship_event is source of truth for ship events, as ship certifications aren't made for each ship event
       if excluding_ship_event
         @project.posts
           .joins("INNER JOIN post_ship_events ON posts.postable_id = post_ship_events.id AND posts.postable_type = 'Post::ShipEvent'")
