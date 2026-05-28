@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_132028) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_200200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -1083,8 +1083,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_132028) do
   add_foreign_key "certification_devlog_reviews", "post_devlogs"
   add_foreign_key "certification_ship_reviews", "projects"
   add_foreign_key "certification_ship_reviews", "users", column: "reviewer_id"
+  add_foreign_key "certification_ysws_reviews", "certification_ship_reviews", column: "ship_cert_id"
   add_foreign_key "certification_ysws_reviews", "post_ship_events"
-  add_foreign_key "certification_ysws_reviews", "post_ship_events", column: "ship_cert_id"
   add_foreign_key "certification_ysws_reviews", "projects"
   add_foreign_key "certification_ysws_reviews", "users"
   add_foreign_key "certification_ysws_reviews", "users", column: "reviewer_id"

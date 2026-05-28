@@ -45,7 +45,7 @@ module Certification
     belongs_to :reviewer, class_name: "User", optional: true
     belongs_to :user
     belongs_to :project
-    belongs_to :ship_cert, class_name: "Post::ShipEvent", optional: true # temporary until ship certs are implemented
+    belongs_to :ship_cert, class_name: "Certification::Ship", optional: true
     belongs_to :post_ship_event, class_name: "Post::ShipEvent"
     belongs_to :spotchecked_by, class_name: "User", optional: true
 
