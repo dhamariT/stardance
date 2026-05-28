@@ -172,6 +172,21 @@ class User < ApplicationRecord
     "#{KERBAL_FIRST_NAMES.sample} Kerman #{rand(1000..9999)}"
   end
 
+  # The user's most recently attached, still-active project for a given mission.
+  # Used by the mission guide page to look up section-completion state and to
+  # decide whether to render the localStorage fallback hint. Returns nil for
+  # signed-out users (call site short-circuits on nil receiver) or users who
+  # haven't attached any project to the mission.
+  def active_project_for_mission(mission)
+    return nil if mission.nil?
+    projects
+      .joins(:mission_attachments)
+      .where(project_mission_attachments: { mission_id: mission.id, detached_at: nil })
+      .where(deleted_at: nil)
+      .order("project_mission_attachments.attached_at DESC")
+      .first
+  end
+
   private
 
   def interests_must_be_allowed

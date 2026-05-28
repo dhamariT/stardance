@@ -108,6 +108,19 @@ body.app-layout-page.signed-in {
   gap: var(--space-m);
 }
 
+// Full-width variant — drops the 820px reading-column cap and reclaims the
+// discover-rail reservation. Use on pages without a rail (e.g. admin) so
+// tables and dense layouts can use the full viewport.
+.app-layout--wide {
+  @media (min-width: 1281px) {
+    margin-right: var(--layout-gap);
+  }
+}
+
+.app-layout__main--wide {
+  max-width: none;
+}
+
 .dev-footer {
   text-align: center;
   font-size: 0.75rem;

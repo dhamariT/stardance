@@ -76,6 +76,22 @@
     border-color: var(--color-space-accent, var(--color-yellow-450));
     background: var(--color-space-card-hover, rgba(255, 255, 255, 0.06));
   }
+
+  // Manageable cards (admin or mission owner) get the canonical admin /
+  // staff-only marker — a 2px orange dashed border (see
+  // docs/branding.md §1.5). Distinct from the regular yellow hover state
+  // and from salmon (warn/destructive), and the dashed style reads as
+  // "non-public / draft-ish" at a glance.
+  &--manageable {
+    border-style: dashed;
+    border-width: 2px;
+    border-color: var(--color-brand-orange);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--color-brand-orange);
+    }
+  }
 }
 
 .mission-card__icon {
@@ -139,6 +155,14 @@
 
   &--badge {
     background: var(--color-space-accent-soft, rgba(167, 139, 250, 0.18));
+  }
+
+  &--draft {
+    background: var(--color-brand-orange-soft);
+    color: var(--color-brand-orange);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   &--difficulty {

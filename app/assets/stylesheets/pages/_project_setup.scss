@@ -162,8 +162,17 @@
     line-height: 1.35;
   }
 
-  &__card-difficulty {
+  // Meta row holding the difficulty + step-count pills below the card
+  // description. align-self keeps it hugging the left edge inside the
+  // column-flex card body instead of stretching to the body's full width.
+  &__card-meta {
     align-self: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  &__card-difficulty {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 999px;
     color: var(--color-brand-cream);
@@ -172,6 +181,18 @@
     letter-spacing: 0.05em;
     padding: 0.15rem 0.55rem;
     text-transform: uppercase;
+  }
+
+  // Step-count pill — neutral (no uppercase / letterspacing) to differentiate
+  // from the difficulty pill semantically. Mirrors the events-page card's
+  // `<li>X-step guide</li>` styling.
+  &__card-steps {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
   }
 
   &__empty {

@@ -1,83 +1,112 @@
 <% content_for :title, "Admin · Edit #{@mission.name}" %>
 
-<div>
-  <header>
-    <h1>Edit <%= @mission.name %></h1>
-    <%= link_to "← Back to view", admin_mission_path(@mission.slug) %>
-  </header>
+<div class="app-layout app-layout--wide">
+  <div class="app-layout__main app-layout__main--wide">
+    <article class="admin-mission">
+      <p class="admin-mission__breadcrumb">
+        <%= link_to "← #{@mission.name}", admin_mission_path(@mission.slug), class: "admin-mission__breadcrumb-link" %>
+      </p>
 
-  <section>
-    <h2>Mission details</h2>
-    <%= render "form", mission: @mission, form_url: admin_mission_path(@mission.slug), form_method: :patch %>
-  </section>
+      <header class="admin-mission__page-header">
+        <h1 class="admin-mission__page-title">Edit <%= @mission.name %></h1>
+      </header>
 
-  <section>
-    <h2>Steps</h2>
-    <ol>
-      <% @steps.each do |step| %>
-        <li>
-          <%= step.title %>
-          <%= button_to "Delete", admin_mission_step_path(@mission.slug, step), method: :delete, data: { turbo_confirm: "Delete?" } %>
-        </li>
-      <% end %>
-    </ol>
-    <%= form_with url: admin_mission_steps_path(@mission.slug), method: :post, local: true do %>
-      <label>Title <%= text_field_tag "mission_step[title]", nil, required: true, autocomplete: "off" %></label>
-      <label>Body <%= text_area_tag "mission_step[body]", nil, rows: 3 %></label>
-      <%= submit_tag "Add step" %>
-    <% end %>
-  </section>
+      <section class="admin-mission__section">
+        <h2 class="admin-mission__section-title">Mission settings</h2>
+        <p class="admin-mission__hint">
+          The admin page only edits the slug. Everything else (title, description,
+          guide, prizes, memberships, shop unlocks, default project copy, etc.) lives
+          on the manage page — admins have access there too.
+        </p>
+        <div class="admin-mission__actions">
+          <%= link_to "Manage this mission →",
+                      edit_manage_mission_path(@mission.slug),
+                      class: "action-btn action-btn--large action-btn--primary" %>
+        </div>
+      </section>
 
-  <section>
-    <h2>Prizes</h2>
-    <ul>
-      <% @prizes.each do |prize| %>
-        <li>
-          <%= prize.shop_item.name %>
-          <%= button_to "Delete", admin_mission_prize_path(@mission.slug, prize), method: :delete, data: { turbo_confirm: "Delete?" } %>
-        </li>
-      <% end %>
-    </ul>
-    <%= form_with url: admin_mission_prizes_path(@mission.slug), method: :post, local: true do %>
-      <%= select_tag "mission_prize[shop_item_id]",
-            options_from_collection_for_select(ShopItem.where(mission_prize_only: true).order(:name), :id, :name),
-            prompt: "Mission-prize-only shop item" %>
-      <%= submit_tag "Add prize" %>
-    <% end %>
-  </section>
+      <section class="admin-mission__section">
+        <h2 class="admin-mission__section-title">Slug</h2>
+        <p class="admin-mission__hint">
+          Renaming the slug changes the public URL. Existing links to
+          <code class="admin-mission__code">/missions/<%= @mission.slug %></code>
+          will 404 after this change.
+        </p>
+        <%= form_with model: @mission, url: admin_mission_path(@mission.slug), method: :patch,
+              local: true, class: "admin-mission__form" do |f| %>
+          <% if @mission.errors.any? %>
+            <div class="admin-mission__errors">
+              <ul>
+                <% @mission.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <label class="admin-mission__field">
+            <span class="admin-mission__field-label">Slug</span>
+            <%= f.text_field :slug, required: true %>
+          </label>
+          <%= f.submit "Update slug", class: "action-btn action-btn--small action-btn--primary" %>
+        <% end %>
+      </section>
 
-  <section>
-    <h2>Memberships</h2>
-    <ul>
-      <% @memberships.each do |m| %>
-        <li>
-          <%= m.user.display_name %> — <%= m.role.titleize %>
-          <%= button_to "Remove", admin_mission_membership_path(@mission.slug, m), method: :delete, data: { turbo_confirm: "Remove?" } %>
-        </li>
-      <% end %>
-    </ul>
-    <%= form_with url: admin_mission_memberships_path(@mission.slug), method: :post, local: true do %>
-      <label>User ID or Slack ID <%= text_field_tag "mission_membership[user_id]", nil, required: true, autocomplete: "off" %></label>
-      <%= select_tag "mission_membership[role]", options_for_select(Mission::Membership.roles.keys.map { |r| [ r.titleize, r ] }) %>
-      <%= submit_tag "Add member" %>
-    <% end %>
-  </section>
+      <section class="admin-mission__section">
+        <h2 class="admin-mission__section-title">Owners</h2>
+        <p class="admin-mission__hint">
+          Owners can manage the mission via the manage page (edit content,
+          add reviewers, configure prizes, etc.). Only admins can grant or
+          revoke ownership.
+        </p>
+        <% if @owners.any? %>
+          <ul class="admin-mission__list">
+            <% @owners.each do |m| %>
+              <li>
+                <span><%= m.user.display_name %> <span class="admin-mission__muted">(#<%= m.user.id %>)</span></span>
+                <%= button_to "Remove",
+                              admin_mission_membership_path(@mission.slug, m),
+                              method: :delete,
+                              data: { turbo_confirm: "Remove #{m.user.display_name} as an owner?" },
+                              class: "action-btn action-btn--small action-btn--destructive" %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="admin-mission__empty">No owners yet. Add one so this mission can be managed without admin.</p>
+        <% end %>
+        <%= form_with url: admin_mission_memberships_path(@mission.slug), method: :post, local: true, class: "admin-mission__form" do %>
+          <label class="admin-mission__field">
+            <span class="admin-mission__field-label">User ID or Slack ID</span>
+            <%= text_field_tag "mission_membership[user_id]", nil, required: true, autocomplete: "off" %>
+          </label>
+          <%= submit_tag "Add owner", class: "action-btn action-btn--small action-btn--primary" %>
+        <% end %>
+      </section>
 
-  <section>
-    <h2>Shop unlocks</h2>
-    <ul>
-      <% @unlocks.each do |u| %>
-        <li>
-          <%= u.shop_item.name %>
-          <%= button_to "Remove", admin_mission_shop_unlock_path(@mission.slug, u), method: :delete, data: { turbo_confirm: "Remove?" } %>
-        </li>
-      <% end %>
-    </ul>
-    <%= form_with url: admin_mission_shop_unlocks_path(@mission.slug), method: :post, local: true do %>
-      <%= select_tag "mission_shop_unlock[shop_item_id]",
-            options_from_collection_for_select(ShopItem.order(:name), :id, :name),
-            prompt: "Shop item" %>
-      <%= submit_tag "Add unlock" %>
-    <% end %>
-  </section>
+      <section class="admin-mission__section">
+        <h2 class="admin-mission__section-title">Danger zone</h2>
+        <% if @mission.deleted_at? %>
+          <p class="admin-mission__hint">
+            This mission is soft-deleted (since <%= @mission.deleted_at.to_date %>).
+            Restore to make it visible again.
+          </p>
+          <%= button_to "Restore mission",
+                        restore_admin_mission_path(@mission.slug),
+                        method: :post,
+                        class: "action-btn action-btn--small action-btn--primary" %>
+        <% else %>
+          <p class="admin-mission__hint">
+            Soft-deletes the mission. It disappears from the public listing
+            and project picker but stays in the database, so this can be
+            undone with Restore.
+          </p>
+          <%= button_to "Soft-delete mission",
+                        admin_mission_path(@mission.slug),
+                        method: :delete,
+                        data: { turbo_confirm: "Soft-delete #{@mission.name}?" },
+                        class: "action-btn action-btn--small action-btn--destructive" %>
+        <% end %>
+      </section>
+    </article>
+  </div>
 </div>

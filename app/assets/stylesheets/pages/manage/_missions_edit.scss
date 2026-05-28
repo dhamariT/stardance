@@ -50,7 +50,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  max-width: 540px;
+
+  > label,
+  > .manage-mission__hint {
+    max-width: 540px;
+  }
 
   label {
     display: flex;
@@ -60,6 +64,8 @@
   }
 
   input[type="text"],
+  input[type="number"],
+  input[type="date"],
   input[type="datetime-local"],
   input[type="file"],
   textarea,
@@ -74,6 +80,22 @@
 
   textarea {
     resize: vertical;
+  }
+
+  // Inline-row label (e.g. checkbox + caption). Overrides the default
+  // column flow so the control sits next to its label instead of above it.
+  label.is-inline {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  // Accent the checkbox itself so it's visible on the dark surface.
+  input[type="checkbox"] {
+    accent-color: var(--color-brand-mint);
+    width: 1.05rem;
+    height: 1.05rem;
+    margin: 0;
   }
 }
 
@@ -106,4 +128,370 @@
 .manage-mission__step-actions {
   display: inline-flex;
   gap: var(--space-xxs);
+}
+
+// Guide-body / submission-guide author editor — textarea on the left, live
+// preview on the right (on wide viewports). Stacks on narrow viewports.
+.manage-mission__guide-editor {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-m);
+
+  @media (min-width: 1100px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.manage-mission__guide-preview {
+  border: 1px solid var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-surface-faint);
+  padding: var(--space-m);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.manage-mission__guide-preview-label {
+  margin: 0 0 var(--space-s);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-space-text-muted);
+  font-weight: 600;
+}
+
+.guide-preview__empty {
+  color: var(--color-space-text-muted);
+  font-style: italic;
+}
+
+.manage-mission__variants {
+  margin: var(--space-l) 0;
+  padding: var(--space-m);
+  border: 1px dashed var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-surface-faint);
+}
+
+.manage-mission__variants-legend {
+  padding: 0 var(--space-s);
+  font-size: var(--font-size-m);
+  font-weight: 600;
+  color: var(--color-brand-off-white);
+}
+
+.manage-mission__variant {
+  margin: var(--space-m) 0;
+  padding: var(--space-m);
+  border-radius: 10px;
+  background: var(--color-overlay-light);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.manage-mission__variant--new {
+  border: 1px dashed var(--color-space-border);
+  background: transparent;
+}
+
+.manage-mission__variant-destroy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-brand-salmon);
+  font-size: var(--font-size-s);
+}
+
+// Guide section header — title + paste button in a single row.
+.manage-mission__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  margin-bottom: var(--space-s);
+
+  .manage-mission__section-title {
+    margin: 0;
+  }
+}
+
+// Paste-a-full-guide / step-edit modal (native <dialog> + showModal()).
+// Explicit fixed centering — browsers technically center showModal()'d
+// dialogs via `margin: auto`, but the explicit transform makes it reliable
+// across Safari + Firefox + Chromium without relying on default sizing.
+.manage-mission__paste-dialog {
+  width: min(720px, 92vw);
+  max-height: 88vh;
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-bg-2);
+  color: var(--color-fg-body);
+
+  &::backdrop {
+    background: rgba(8, 6, 30, 0.7);
+    backdrop-filter: blur(2px);
+  }
+}
+
+.manage-mission__paste-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-l);
+}
+
+.manage-mission__paste-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.manage-mission__paste-title {
+  margin: 0;
+  font-size: var(--font-size-l);
+  color: var(--color-brand-off-white);
+  font-weight: 700;
+}
+
+.manage-mission__paste-close {
+  border: 0;
+  background: transparent;
+  color: var(--color-fg-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--space-xs);
+
+  &:hover {
+    color: var(--color-brand-off-white);
+  }
+}
+
+.manage-mission__paste-textarea {
+  width: 100%;
+  min-height: 320px;
+  resize: vertical;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--font-size-s);
+  line-height: 1.5;
+  padding: var(--space-s);
+  border: 1px solid var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-bg);
+  color: var(--color-brand-off-white);
+}
+
+.manage-mission__paste-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-s);
+}
+
+.manage-mission__image-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: 0.9rem;
+}
+
+.manage-mission__image-field-label {
+  font-weight: 600;
+  color: var(--color-fg-body);
+}
+
+// Language tabs at the top of the Guide section. Each tab is a link that
+// reloads the page scoped to that language; the active tab is filled in.
+.manage-mission__lang-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-s);
+  padding-bottom: var(--space-s);
+  border-bottom: 1px solid var(--color-space-border);
+}
+
+.manage-mission__lang-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-space-border);
+  background: transparent;
+  color: var(--color-fg-body);
+  font-size: var(--font-size-s);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+
+  &:hover {
+    border-color: var(--color-brand-mint);
+    color: var(--color-brand-mint);
+  }
+
+  &--active {
+    background: var(--color-brand-mint);
+    border-color: var(--color-brand-mint);
+    color: var(--color-space-bg);
+
+    &:hover {
+      background: var(--color-brand-lilac);
+      border-color: var(--color-brand-lilac);
+      color: var(--color-space-bg);
+    }
+  }
+
+  &--add {
+    border-style: dashed;
+    color: var(--color-fg-muted);
+  }
+}
+
+.manage-mission__paste-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-size-s);
+  color: var(--color-fg-muted);
+}
+
+.manage-mission__paste-language {
+  padding: var(--space-xs);
+  border-radius: 6px;
+  border: 1px solid var(--color-space-border);
+  background: var(--color-space-bg);
+  color: var(--color-brand-off-white);
+  font-family: inherit;
+  font-size: var(--font-size-m);
+}
+
+// Drag handle on the right of each step row. Cursor changes to grab/grabbing
+// to communicate the affordance; the icon itself is a 6-dot grip.
+.manage-mission__step {
+  // Re-layout so the handle sits at the far right while title + actions
+  // keep their existing flex spots.
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+
+  &.is-dragging {
+    opacity: 0.5;
+  }
+}
+
+.manage-mission__step-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-mission__step-handle {
+  order: 99; // Push to the rightmost slot in the flex row.
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--color-fg-muted);
+  cursor: grab;
+  user-select: none;
+  flex: 0 0 auto;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-brand-off-white);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Rendered guide preview at the bottom of the Guide section. Collapsed by
+// default so the editor stays tight; expand to verify markdown + shortcodes.
+.manage-mission__guide-preview-wrap {
+  margin-top: var(--space-l);
+  padding: var(--space-m);
+  border: 1px dashed var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-surface-faint);
+}
+
+.manage-mission__guide-preview-summary {
+  cursor: pointer;
+  font-size: var(--font-size-s);
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: var(--space-xs);
+    transition: transform 120ms ease;
+  }
+
+  &:hover {
+    color: var(--color-brand-mint);
+  }
+}
+
+.manage-mission__guide-preview-wrap[open]
+  .manage-mission__guide-preview-summary::before {
+  transform: rotate(90deg);
+}
+
+// Rendered guide preview at the bottom of the Guide section. Collapsed by
+// default so the editor stays tight; expand to verify markdown + shortcodes.
+.manage-mission__guide-preview-wrap {
+  margin-top: var(--space-l);
+  padding: var(--space-m);
+  border: 1px dashed var(--color-space-border);
+  border-radius: var(--profile-radius);
+  background: var(--color-space-surface-faint);
+}
+
+.manage-mission__guide-preview-summary {
+  cursor: pointer;
+  font-size: var(--font-size-s);
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: var(--space-xs);
+    transition: transform 120ms ease;
+  }
+
+  &:hover {
+    color: var(--color-brand-mint);
+  }
+}
+
+.manage-mission__guide-preview-wrap[open]
+  .manage-mission__guide-preview-summary::before {
+  transform: rotate(90deg);
 }

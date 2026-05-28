@@ -165,9 +165,23 @@ class ProjectsController < ApplicationController
     @project = Project.new
     authorize @project
     @missions = Mission.available
+                       .where.not(id: missions_user_already_has_a_project_on)
                        .includes(:icon_attachment, :banner_attachment)
                        .order(featured_at: :desc)
                        .limit(8)
+  end
+
+  # Mission ids the current user already has at least one active project on.
+  # Used to hide already-attached missions from the picker so a user can't
+  # land on the same mission twice.
+  def missions_user_already_has_a_project_on
+    return [] unless current_user
+    current_user.projects
+                .where(deleted_at: nil)
+                .joins(:mission_attachments)
+                .where(project_mission_attachments: { detached_at: nil, deleted_at: nil })
+                .pluck("project_mission_attachments.mission_id")
+                .uniq
   end
 
   def create

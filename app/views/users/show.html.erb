@@ -220,16 +220,6 @@
                   </ul>
                 </div>
 
-                <% authors = project.users.to_a %>
-                <% if authors.any? %>
-                  <p class="profile-project-card__authors">
-                    By
-                    <% authors.each_with_index do |author, idx| %>
-                      <%= "and " if idx > 0 && idx == authors.length - 1 %><span class="profile-project-card__author">@<%= author.display_name %></span><%= "," if idx < authors.length - 2 && authors.length > 2 %>
-                    <% end %>
-                  </p>
-                <% end %>
-
                 <% if project.description.present? %>
                   <p class="profile-project-card__description"><%= project.description %></p>
                 <% end %>

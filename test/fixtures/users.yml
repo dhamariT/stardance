@@ -60,3 +60,9 @@ two:
   display_name: MyString
   slack_id: U_FIXTURE_TWO
   votes_count: 1
+
+three:
+  email: three@example.test
+  display_name: MyString
+  slack_id: U_FIXTURE_THREE
+  votes_count: 0

@@ -1,0 +1,30 @@
+<%# Shop unlocks section wrapped in its own Turbo Frame.
+    Locals: mission, unlocks %>
+<%= turbo_frame_tag "manage-mission-shop-unlocks" do %>
+  <section class="manage-mission__section">
+    <h2 class="manage-mission__section-title">Shop unlocks</h2>
+    <p class="manage-mission__hint">Items that completing this mission will unlock for the user.</p>
+    <ul class="manage-mission__unlocks">
+      <% unlocks.each do |u| %>
+        <li class="manage-mission__unlock">
+          <%= u.shop_item.name %>
+          <%= button_to "Remove",
+                        manage_mission_shop_unlock_path(mission.slug, u),
+                        method: :delete,
+                        data: { turbo_confirm: "Remove this unlock?" },
+                        class: "action-btn action-btn--small action-btn--destructive" %>
+        </li>
+      <% end %>
+    </ul>
+    <%= form_with url: manage_mission_shop_unlocks_path(mission.slug),
+          method: :post, class: "manage-mission__form" do %>
+      <h3>Add shop unlock</h3>
+      <label>Shop item
+        <%= select_tag "mission_shop_unlock[shop_item_id]",
+              options_from_collection_for_select(ShopItem.order(:name), :id, :name),
+              prompt: "Select a shop item" %>
+      </label>
+      <%= submit_tag "Add unlock", class: "action-btn action-btn--large action-btn--primary" %>
+    <% end %>
+  </section>
+<% end %>

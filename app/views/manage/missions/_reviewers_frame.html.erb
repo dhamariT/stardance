@@ -1,0 +1,31 @@
+<%# Reviewers (mission memberships) section wrapped in its own Turbo Frame.
+    Locals: mission, memberships %>
+<%= turbo_frame_tag "manage-mission-reviewers" do %>
+  <section class="manage-mission__section">
+    <h2 class="manage-mission__section-title">Reviewers</h2>
+    <p class="manage-mission__hint">
+      Reviewers can certify submissions for this mission. Adding or removing
+      an owner is admin-only — head to the admin page for those.
+    </p>
+    <ul class="manage-mission__memberships">
+      <% memberships.each do |m| %>
+        <li class="manage-mission__membership">
+          <%= m.user.display_name %> — <em><%= m.role.titleize %></em>
+          <% if m.reviewer_role? %>
+            <%= button_to "Remove",
+                          manage_mission_membership_path(mission.slug, m),
+                          method: :delete,
+                          data: { turbo_confirm: "Remove this reviewer?" },
+                          class: "action-btn action-btn--small action-btn--destructive" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+    <%= form_with url: manage_mission_memberships_path(mission.slug),
+          method: :post, class: "manage-mission__form" do %>
+      <h3>Add reviewer</h3>
+      <label>User ID or Slack ID <%= text_field_tag "mission_membership[user_id]", nil, required: true, autocomplete: "off" %></label>
+      <%= submit_tag "Add reviewer", class: "action-btn action-btn--large action-btn--primary" %>
+    <% end %>
+  </section>
+<% end %>
