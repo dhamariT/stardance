@@ -468,6 +468,12 @@
     font-weight: 600;
   }
 
+  // Fixed width so the status pill sits in the same spot on every row.
+  &__cell-status {
+    width: 130px;
+    white-space: nowrap;
+  }
+
   &__cell-action {
     text-align: right;
     white-space: nowrap;

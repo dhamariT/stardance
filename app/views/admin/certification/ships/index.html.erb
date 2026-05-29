@@ -179,7 +179,7 @@
           <thead>
             <tr>
               <th>Project</th>
-              <th>Status</th>
+              <th class="ship-queue__cell-status">Status</th>
               <th></th>
             </tr>
           </thead>
@@ -202,7 +202,7 @@
                     <% end %>
                   </div>
                 </td>
-                <td>
+                <td class="ship-queue__cell-status">
                   <span class="status-pill status-pill--<%= ship.status %>"><%= ship.status.capitalize %></span>
                 </td>
                 <td class="ship-queue__cell-action">
