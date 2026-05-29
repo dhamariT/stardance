@@ -157,12 +157,12 @@
 #                                            PATCH  /admin/missions/:slug(.:format)                                                                   admin/missions#update
 #                                            PUT    /admin/missions/:slug(.:format)                                                                   admin/missions#update
 #                                            DELETE /admin/missions/:slug(.:format)                                                                   admin/missions#destroy
-#             next_admin_certification_ships GET    /admin/certification/ship_cert/next(.:format)                                                     admin/certification/ships#next
-#             claim_admin_certification_ship POST   /admin/certification/ship_cert/:id/claim(.:format)                                                admin/certification/ships#claim
-#                  admin_certification_ships GET    /admin/certification/ship_cert(.:format)                                                          admin/certification/ships#index
-#                   admin_certification_ship GET    /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#show
-#                                            PATCH  /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#update
-#                                            PUT    /admin/certification/ship_cert/:id(.:format)                                                      admin/certification/ships#update
+#             next_admin_certification_ships GET    /admin/certification/ship/next(.:format)                                                          admin/certification/ships#next
+#             claim_admin_certification_ship POST   /admin/certification/ship/:id/claim(.:format)                                                     admin/certification/ships#claim
+#                  admin_certification_ships GET    /admin/certification/ship(.:format)                                                               admin/certification/ships#index
+#                   admin_certification_ship GET    /admin/certification/ship/:id(.:format)                                                           admin/certification/ships#show
+#                                            PATCH  /admin/certification/ship/:id(.:format)                                                           admin/certification/ships#update
+#                                            PUT    /admin/certification/ship/:id(.:format)                                                           admin/certification/ships#update
 #          admin_certification_devlog_review PATCH  /admin/certification/devlog_reviews/:id(.:format)                                                 admin/certification/devlog_reviews#update
 #                                            PUT    /admin/certification/devlog_reviews/:id(.:format)                                                 admin/certification/devlog_reviews#update
 #           admin_certification_ysws_reviews GET    /admin/certification/review(.:format)                                                             admin/certification/ysws#index
@@ -640,7 +640,7 @@ Rails.application.routes.draw do
     end
 
     namespace :certification do
-      resources :ships, path: "ship_cert", only: [ :index, :show, :update ] do
+      resources :ships, path: "ship", only: [ :index, :show, :update ] do
         collection do
           get :next
         end
