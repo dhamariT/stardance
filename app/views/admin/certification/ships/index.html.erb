@@ -163,6 +163,7 @@
           <thead>
             <tr>
               <th>Project</th>
+              <th>Type</th>
               <th>Status</th>
               <th>Claim / Reviewer</th>
               <th>Submitter</th>
@@ -179,13 +180,22 @@
                   <%= link_to ship.project.title, admin_certification_ship_path(ship), class: "ship-queue__project-title" %>
                   <span class="ship-queue__project-id">#<%= ship.id %></span>
                 </td>
+                <td class="ship-queue__cell-type">
+                  <% if ship.project.project_categories.present? %>
+                    <% ship.project.project_categories.each do |category| %>
+                      <span class="ship-queue__type-tag"><%= category %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="ship-queue__muted">—</span>
+                  <% end %>
+                </td>
                 <td>
                   <span class="status-pill status-pill--<%= ship.status %>"><%= ship.status.capitalize %></span>
                 </td>
                 <td class="ship-queue__cell-claim">
                   <% if ship.pending? %>
                     <% if claimed %>
-                      <span class="ship-queue__claimed">🔒 <%= ship.reviewer.display_name %></span>
+                      <span class="ship-queue__claimed"><%= inline_svg_tag "icons/lock.svg", class: "ship-queue__claimed-icon", aria: { hidden: true } %><%= ship.reviewer.display_name %></span>
                       <span class="ship-queue__countdown"
                             data-certification--queue-target="countdown"
                             data-expires-at="<%= ship.claim_expires_at.iso8601 %>"></span>
@@ -225,6 +235,13 @@
               <span class="ship-queue__project-title"><%= ship.project.title %></span>
               <span class="status-pill status-pill--<%= ship.status %>"><%= ship.status.capitalize %></span>
             </div>
+            <% if ship.project.project_categories.present? %>
+              <div class="ship-queue__card-tags">
+                <% ship.project.project_categories.each do |category| %>
+                  <span class="ship-queue__type-tag"><%= category %></span>
+                <% end %>
+              </div>
+            <% end %>
             <div class="ship-queue__card-meta">
               <span class="ship-queue__project-id">#<%= ship.id %></span>
               <span class="ship-queue__muted"><%= time_ago_in_words(ship.created_at) %> ago</span>
@@ -232,7 +249,7 @@
             <div class="ship-queue__card-meta">
               <span class="ship-queue__muted">by <%= owner&.display_name || "—" %></span>
               <% if claimed %>
-                <span class="ship-queue__claimed">🔒 <%= ship.reviewer.display_name %></span>
+                <span class="ship-queue__claimed"><%= inline_svg_tag "icons/lock.svg", class: "ship-queue__claimed-icon", aria: { hidden: true } %><%= ship.reviewer.display_name %></span>
               <% elsif ship.pending? %>
                 <span class="ship-queue__muted">unclaimed</span>
               <% elsif ship.reviewer %>
@@ -241,6 +258,12 @@
             </div>
           <% end %>
         <% end %>
+      </div>
+    <% end %>
+
+    <% if @pagy.pages > 1 %>
+      <div class="ship-queue__pagination">
+        <%== @pagy.series_nav %>
       </div>
     <% end %>
   </div>

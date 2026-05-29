@@ -19,9 +19,9 @@ class Admin::Certification::ShipsController < Admin::Certification::ApplicationC
     scope = scope.where("certification_ship_reviews.created_at <= ?", @to.end_of_day) if @to
     scope = apply_search(scope) if @search.present?
 
-    @ships = scope
-               .order(created_at: @sort == "newest" ? :desc : :asc)
-               .limit(100)
+    @pagy, @ships = pagy(:offset,
+                         scope.order(created_at: @sort == "newest" ? :desc : :asc),
+                         limit: 25)
 
     @stats = ::Certification::Ship.dashboard_stats
     @lb_period = params[:lb].presence_in(%w[daily weekly alltime]) || "daily"
