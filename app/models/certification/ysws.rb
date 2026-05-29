@@ -34,7 +34,7 @@
 #  fk_rails_...  (post_ship_event_id => post_ship_events.id)
 #  fk_rails_...  (project_id => projects.id)
 #  fk_rails_...  (reviewer_id => users.id)
-#  fk_rails_...  (ship_cert_id => post_ship_events.id)
+#  fk_rails_...  (ship_cert_id => certification_ship_reviews.id)
 #  fk_rails_...  (spotchecked_by_id => users.id)
 #  fk_rails_...  (user_id => users.id)
 #
