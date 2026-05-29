@@ -1,5 +1,5 @@
 class Admin::Certification::ShipsController < Admin::Certification::ApplicationController
-  before_action :release_other_claims, only: [ :index, :next, :claim ]
+  before_action :release_other_claims, only: [ :next, :claim ]
   before_action :set_ship, only: [ :show, :update, :claim ]
 
   def index
