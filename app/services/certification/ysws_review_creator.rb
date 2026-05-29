@@ -70,7 +70,7 @@ module Certification
       start_time = previous_ship_event_post ? previous_ship_event_post.created_at : project.created_at
       end_time = ship_event_post.created_at
 
-      [start_time, end_time]
+      [ start_time, end_time ]
     end
   end
 end
