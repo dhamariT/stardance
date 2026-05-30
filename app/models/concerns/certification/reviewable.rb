@@ -7,7 +7,7 @@ module Certification
     class_methods do
       def available_for(user)
         where(status: statuses[:pending]).where(
-          "(reviewer_id IS NULL OR claim_expires_at IS NULL OR claim_expires_at < ?) OR reviewer_id = ?",
+          "reviewer_id IS NULL OR claim_expires_at < ? OR reviewer_id = ?",
           Time.current, user.id
         )
       end
@@ -16,13 +16,16 @@ module Certification
         now = Time.current
         expires = now + CLAIM_TTL
         updated = where(id: record_id, status: statuses[:pending])
-          .where("reviewer_id IS NULL OR claim_expires_at IS NULL OR claim_expires_at < ? OR reviewer_id = ?", now, user.id)
+          .where("reviewer_id IS NULL OR claim_expires_at < ? OR reviewer_id = ?", now, user.id)
           .update_all(reviewer_id: user.id, claimed_at: now, claim_expires_at: expires, updated_at: now)
         updated.zero? ? nil : find(record_id)
       end
 
+      # Releases only active claims (those with a TTL). Sticky 1:1 assignments
+      # have no claim_expires_at and stay reserved to their reviewer.
       def release_all_for(user)
         where(reviewer_id: user.id, status: statuses[:pending])
+          .where.not(claim_expires_at: nil)
           .update_all(reviewer_id: nil, claim_expires_at: nil, updated_at: Time.current)
       end
 

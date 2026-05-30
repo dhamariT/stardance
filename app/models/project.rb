@@ -233,7 +233,9 @@ class Project < ApplicationRecord
       transitions from: [ :draft, :submitted, :under_review, :needs_changes, :approved, :rejected ], to: :submitted, guard: :shippable?
       after do
         self.shipped_at = Time.current
-        ship_reviews.find_or_create_by!(status: :pending)
+        ship_reviews.find_or_create_by!(status: :pending) do |review|
+          review.reviewer_id = ship_reviews.where.not(status: :pending).order(:created_at).last&.reviewer_id
+        end
       end
     end
 
