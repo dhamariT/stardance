@@ -294,7 +294,9 @@
   background: var(--color-space-surface, rgba(255, 255, 255, 0.04));
   border: 1px dashed var(--color-space-border, rgba(255, 255, 255, 0.28));
   border-radius: 8px;
-  transition: border-color 120ms ease, background-color 120ms ease;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
 
   &--over {
     border-color: var(--color-brand-highlight);

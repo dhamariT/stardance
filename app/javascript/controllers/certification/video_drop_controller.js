@@ -8,7 +8,14 @@ const ACCEPTED = ["video/mp4", "video/webm", "video/quicktime"];
 const MAX_BYTES = 250 * 1024 * 1024;
 
 export default class extends Controller {
-  static targets = ["input", "prompt", "preview", "video", "filename", "status"];
+  static targets = [
+    "input",
+    "prompt",
+    "preview",
+    "video",
+    "filename",
+    "status",
+  ];
   static classes = ["over", "accepted", "error"];
 
   open() {
