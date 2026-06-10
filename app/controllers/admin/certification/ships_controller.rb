@@ -35,6 +35,8 @@ class Admin::Certification::ShipsController < Admin::Certification::ApplicationC
   def show
     authorize @ship
     @reviewed_today = ::Certification::Ship.reviewed_today(current_user)
+    owner = @ship.project.memberships.find(&:owner?)&.user
+    @submitter_history = owner && ::Certification::Ship.submitter_history(owner)
   end
 
   def update

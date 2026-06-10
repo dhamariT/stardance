@@ -103,6 +103,27 @@
       </section>
 
       <aside class="ship-review__sidebar">
+        <% if @submitter_history %>
+          <div class="submitter-history">
+            <h2 class="submitter-history__title">Submitter history</h2>
+            <% if @submitter_history[:total] <= 1 %>
+              <p class="submitter-history__note">First submission from <%= owner.display_name %>.</p>
+            <% else %>
+              <p class="submitter-history__summary">
+                <%= pluralize(@submitter_history[:total], "review") %> across
+                <%= pluralize(@submitter_history[:projects], "project") %>:
+                <span class="submitter-history__count submitter-history__count--approved"><%= @submitter_history[:approved] %> approved</span>
+                <span class="submitter-history__count submitter-history__count--returned"><%= @submitter_history[:returned] %> returned</span>
+              </p>
+              <% if (last_return = @submitter_history[:last_returned]) %>
+                <p class="submitter-history__note">Last return <%= time_ago_in_words(last_return.decided_on) %> ago<%= ", told:" if last_return.feedback.present? %></p>
+                <% if last_return.feedback.present? %>
+                  <blockquote class="submitter-history__feedback"><%= truncate(last_return.feedback, length: 240) %></blockquote>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
         <% if can_review %>
           <%= render "form", ship: @ship %>
         <% else %>

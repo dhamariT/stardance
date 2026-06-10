@@ -144,6 +144,21 @@ module Certification
            .map { |name, count| { name: name, count: count } }
     end
 
+    # Verdict history across every project this user owns. Shown beside the
+    # review form so Shipwrights judging a gray-area project can see whether
+    # the submitter keeps getting returned for low quality.
+    def self.submitter_history(user)
+      scope = joins(project: :memberships)
+                .where(project_memberships: { user_id: user.id, role: :owner })
+      {
+        total: scope.count,
+        projects: scope.distinct.count(:project_id),
+        approved: scope.where(status: :approved).count,
+        returned: scope.where(status: :returned).count,
+        last_returned: scope.where(status: :returned).order(decided_at: :desc).first
+      }
+    end
+
     # How many reviews this reviewer has decided today. Drives the momentum
     # counter on the review page, so it's scoped to the user, not the queue.
     def self.reviewed_today(user, now: Time.current)
