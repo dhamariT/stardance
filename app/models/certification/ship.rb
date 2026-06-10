@@ -60,18 +60,20 @@ module Certification
       {
         label: "Doesn't meet quality standards",
         body: <<~TEXT.strip
-          Your project doesn't meet our quality standards. We're requesting the following changes to get it ready for voting!
+          Hey! Thanks for shipping your project. It's not quite ready for voting yet, so here's what we'd like you to change:
           - Change 1
           - Change 2
           - Change 3
+          Once you've made these, ship it again and we'll take another look!
         TEXT
       },
       {
         label: "AI-generated look & feel",
         body: <<~TEXT.strip
-          Your project doesn't meet our quality standards. We're requesting the following changes to get it ready for voting!
+          Hey! Thanks for shipping your project. It's not quite ready for voting yet, so here's what we'd like you to change:
           - Rework the CSS, right now it looks like every other AI-made site. Give it your own style.
           - Add a couple of features you came up with yourself to make it more fun to use.
+          Once you've made these, ship it again and we'll take another look!
         TEXT
       }
     ].freeze
