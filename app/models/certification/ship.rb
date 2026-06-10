@@ -150,12 +150,13 @@ module Certification
     def self.submitter_history(user)
       scope = joins(project: :memberships)
                 .where(project_memberships: { user_id: user.id, role: :owner })
+      counts = scope.group(:status).count
       {
-        total: scope.count,
+        total: counts.values.sum,
         projects: scope.distinct.count(:project_id),
-        approved: scope.where(status: :approved).count,
-        returned: scope.where(status: :returned).count,
-        last_returned: scope.where(status: :returned).order(decided_at: :desc).first
+        approved: counts["approved"].to_i,
+        returned: counts["returned"].to_i,
+        last_returned: scope.returned.order(decided_at: :desc).first
       }
     end
 

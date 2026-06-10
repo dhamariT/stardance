@@ -1,6 +1,7 @@
 class Admin::Certification::ShipsController < Admin::Certification::ApplicationController
   before_action :release_other_claims, only: [ :next ]
   before_action :set_ship, only: [ :show, :update ]
+  before_action :set_submitter_context, only: [ :show, :update ]
   before_action :set_body_class, only: [ :index, :show, :update ]
 
   def index
@@ -35,8 +36,6 @@ class Admin::Certification::ShipsController < Admin::Certification::ApplicationC
   def show
     authorize @ship
     @reviewed_today = ::Certification::Ship.reviewed_today(current_user)
-    owner = @ship.project.memberships.find(&:owner?)&.user
-    @submitter_history = owner && ::Certification::Ship.submitter_history(owner)
   end
 
   def update
@@ -68,6 +67,13 @@ class Admin::Certification::ShipsController < Admin::Certification::ApplicationC
   end
 
   private
+
+  # Also loaded for update so the re-rendered show page keeps the submitter
+  # panel when the verdict form fails validation.
+  def set_submitter_context
+    @owner = @ship.project.memberships.find(&:owner?)&.user
+    @submitter_history = @owner && ::Certification::Ship.submitter_history(@owner)
+  end
 
   def set_ship
     @ship = ::Certification::Ship.find(params[:id])

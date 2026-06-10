@@ -149,6 +149,9 @@
   }
 
   &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
     position: sticky;
     top: var(--space-l);
 
@@ -278,53 +281,6 @@
 }
 
 // Verdict form (_form.html.erb), shown in the review sidebar.
-// Submitter's verdict history, shown above the review form for context on
-// repeat low-quality submitters.
-.submitter-history {
-  padding: var(--space-m) var(--space-l);
-  margin-bottom: var(--space-m);
-  font-size: 0.9rem;
-  color: var(--color-space-text);
-  background: var(--color-space-card, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--color-space-border, rgba(255, 255, 255, 0.1));
-  border-radius: 12px;
-
-  &__title {
-    margin: 0 0 var(--space-xs);
-    font-size: var(--font-size-m);
-  }
-
-  &__summary,
-  &__note {
-    margin: 0 0 var(--space-xs);
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  &__count {
-    font-weight: 600;
-
-    &--approved {
-      color: var(--color-brand-mint);
-    }
-
-    &--returned {
-      color: var(--color-brand-salmon);
-    }
-  }
-
-  &__feedback {
-    padding-left: var(--space-s);
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--color-space-text-muted, rgba(255, 255, 255, 0.7));
-    white-space: pre-wrap;
-    border-left: 2px solid var(--color-space-border, rgba(255, 255, 255, 0.18));
-  }
-}
-
 .review-form {
   display: flex;
   flex-direction: column;
