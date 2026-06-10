@@ -70,8 +70,8 @@ module Certification
         label: "AI-generated look & feel",
         body: <<~TEXT.strip
           Your project doesn't meet our quality standards. We're requesting the following changes to get it ready for voting!
-          - Rework the styling so it doesn't lean on generic AI-generated gradients, give the project a look of its own
-          - Add some creative features that make the project worth spending time on
+          - Rework the CSS, right now it looks like every other AI-made site. Give it your own style.
+          - Add a couple of features you came up with yourself to make it more fun to use.
         TEXT
       }
     ].freeze
