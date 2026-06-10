@@ -345,6 +345,46 @@
     cursor: pointer;
   }
 
+  &__template-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  &__templates,
+  &__template-action {
+    padding: var(--space-xs) var(--space-s);
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--color-space-text);
+    cursor: pointer;
+    background: var(--color-space-surface, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--color-space-border, rgba(255, 255, 255, 0.18));
+    border-radius: 8px;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-brand-highlight);
+      outline-offset: 1px;
+    }
+  }
+
+  &__template-action {
+    color: var(--color-brand-mint);
+
+    &:hover {
+      background: rgba(129, 255, 255, 0.08);
+    }
+
+    &--danger {
+      color: var(--color-brand-salmon);
+
+      &:hover {
+        background: rgba(255, 141, 157, 0.08);
+      }
+    }
+  }
+
   &__field {
     display: flex;
     flex-direction: column;

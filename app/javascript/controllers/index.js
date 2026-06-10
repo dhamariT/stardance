@@ -34,6 +34,12 @@ application.register(
   Certification__Ysws__DevlogTimeChartController,
 );
 
+import Certification__FeedbackTemplatesController from "./certification/feedback_templates_controller";
+application.register(
+  "certification--feedback-templates",
+  Certification__FeedbackTemplatesController,
+);
+
 import Certification__QueueController from "./certification/queue_controller";
 application.register("certification--queue", Certification__QueueController);
 

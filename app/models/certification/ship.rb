@@ -53,6 +53,29 @@ module Certification
 
     ACCEPTED_VIDEO_TYPES = %w[video/mp4 video/webm video/quicktime].freeze
 
+    # Canned request-changes responses offered on the review form. The opener
+    # is the standard wording Shipwrights use for low-quality submissions;
+    # reviewers replace the bullets with the specific changes they want.
+    FEEDBACK_TEMPLATES = [
+      {
+        label: "Doesn't meet quality standards",
+        body: <<~TEXT.strip
+          Your project doesn't meet our quality standards. We're requesting the following changes to get it ready for voting!
+          - Change 1
+          - Change 2
+          - Change 3
+        TEXT
+      },
+      {
+        label: "AI-generated look & feel",
+        body: <<~TEXT.strip
+          Your project doesn't meet our quality standards. We're requesting the following changes to get it ready for voting!
+          - Rework the styling so it doesn't lean on generic AI-generated gradients, give the project a look of its own
+          - Add some creative features that make the project worth spending time on
+        TEXT
+      }
+    ].freeze
+
     validates :feedback, length: { maximum: 10_000 }, allow_blank: true
     validates :verdict_video,
               content_type: { in: ACCEPTED_VIDEO_TYPES, spoofing_protection: true }
